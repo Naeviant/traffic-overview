@@ -86,7 +86,7 @@ cron.schedule('* * * * *', async () => {
                     subsections: (section as any).primaryDownstreamJunctionSection.links.map((x: any) => { return x.id }),
                     speed: (section as any).primaryDownstreamJunctionSection.avgSpeed,
                     length: (section as any).primaryDownstreamJunctionSection.links.map((x: any) => { return x.length }).reduce((a: number, b: number) => a + b, 0),
-                    speedLimits: (section as any).primaryDownstreamJunctionSection.links.map((x: any) => { return x.speedLimit }),
+                    speedLimits: Array.from(new Set((section as any).primaryDownstreamJunctionSection.links.map((x: any) => { return x.speedLimit }).filter((x: number) => x != 70))),
                     data: []
                 }
 
@@ -174,7 +174,7 @@ cron.schedule('* * * * *', async () => {
                     subsections: (section as any).secondaryUpstreamJunctionSection.links.map((x: any) => { return x.id }),
                     speed: (section as any).secondaryUpstreamJunctionSection.avgSpeed,
                     length: (section as any).secondaryUpstreamJunctionSection.links.map((x: any) => { return x.length }).reduce((a: number, b: number) => a + b, 0),
-                    speedLimits: (section as any).secondaryUpstreamJunctionSection.links.map((x: any) => { return x.speedLimit }).filter((x: number) => x != 70),
+                    speedLimits: Array.from(new Set((section as any).secondaryUpstreamJunctionSection.links.map((x: any) => { return x.speedLimit }).filter((x: number) => x != 70))),
                     data: []
                 }
 
