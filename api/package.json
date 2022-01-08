@@ -18,6 +18,9 @@
   },
   "homepage": "https://github.com/Naeviant/traffic-overview#readme",
   "dependencies": {
-    "express": "^4.17.2"
+    "@types/node-cron": "^3.0.1",
+    "axios": "^0.24.0",
+    "express": "^4.17.2",
+    "node-cron": "^3.0.0"
   }
 }
