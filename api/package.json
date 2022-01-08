@@ -1,0 +1,23 @@
+{
+  "name": "traffic-overview-api",
+  "version": "1.0.0",
+  "description": "The API for an unofficial rewrite of National Highway's Traffic England service.",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Naeviant/traffic-overview.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node dist/app.js"
+  },
+  "author": "Sam Hirst",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Naeviant/traffic-overview/issues"
+  },
+  "homepage": "https://github.com/Naeviant/traffic-overview#readme",
+  "dependencies": {
+    "express": "^4.17.2"
+  }
+}
