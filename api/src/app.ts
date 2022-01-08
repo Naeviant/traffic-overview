@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import cron from 'node-cron';
-import axios, { Axios, AxiosResponse } from 'axios';
-import fs, { rmSync } from 'fs';
+import axios from 'axios';
+import fs from 'fs';
 import * as dotenv from 'dotenv';
 
 import { RoadList } from './types/RoadList';
