@@ -275,6 +275,16 @@ app.get('/roads', async (req: Request, res: Response) => {
     res.send({ status: 200, data: JSON.parse(roads) });
 });
 
+app.get('/road/:road', async (req: Request, res: Response) => {
+    try {
+        const road = fs.readFileSync(__dirname + `/../data/roads/${ req.params.road }.json`, 'utf8');
+
+        res.send({ status: 200, data: JSON.parse(road) });
+    } catch(e) {
+        res.send({ status: 404, data: [] });
+    }
+});
+
 app.listen(process.env.API_PORT, () => {
     console.log(`Server Listening on Port ${process.env.API_PORT}`);
 });
