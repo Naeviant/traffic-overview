@@ -1,3 +1,3 @@
-export default interface RoadList {
+export interface RoadList {
     [key: string]: [{}]
 };
