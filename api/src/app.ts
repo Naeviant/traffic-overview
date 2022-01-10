@@ -90,6 +90,28 @@ cron.schedule('* * * * *', async () => {
                     data: []
                 }
 
+                for (const link of Object.keys(eventData)) {
+                    if (primaryDirectionSection.subsections.map(x => x.toString()).indexOf(link) > -1) {
+                        for (const incident of eventData[link]) {
+                            if (primaryDirectionSection.data.map(x => { return x.id; }).indexOf(incident.id) === -1) {
+                                const event: Event = {
+                                    id: incident.id,
+                                    type: incident.teEventType,
+                                    severity: incident.severity,
+                                    lat: incident.latitude,
+                                    long: incident.longitude,
+                                    startTimestamp: incident.overallStartDate,
+                                    endTimestamp: incident.overallEndDate,
+                                    lanes: incident.eventLanes,
+                                    reason: incident.formatDesc.length === 5 ? incident.formatDesc[2].replace('Reason : ', '') : incident.formatDesc[1].replace('Reason : ', '')
+                                };
+                                
+                                primaryDirectionSection.data.push(event);
+                            }
+                        }
+                    }
+                }
+
                 for (const cctv of Object.values(cctvData)) {
                     if (primaryDirectionSection.subsections.indexOf((cctv as any)[0].linkId) > -1) {
                         const camera: CCTV = {
@@ -110,6 +132,7 @@ cron.schedule('* * * * *', async () => {
                         const locations = new Set(Object.keys(vmsData[subsection.toString()]).map((x) => { return x.substring(0, x.length - 1) }));
                         locations.forEach((location: string) => {
                             const vmsGroup: VMSGroup = {
+                                id: null,
                                 address: location,
                                 vms: null,
                                 sig: [],
@@ -178,6 +201,28 @@ cron.schedule('* * * * *', async () => {
                     data: []
                 }
 
+                for (const link of Object.keys(eventData)) {
+                    if (secondaryDirectionSection.subsections.map(x => x.toString()).indexOf(link) > -1) {
+                        for (const incident of eventData[link]) {
+                            if (secondaryDirectionSection.data.map(x => { return x.id; }).indexOf(incident.id) === -1) {
+                                const event: Event = {
+                                    id: incident.id,
+                                    type: incident.teEventType,
+                                    severity: incident.severity,
+                                    lat: incident.latitude,
+                                    long: incident.longitude,
+                                    startTimestamp: incident.overallStartDate,
+                                    endTimestamp: incident.overallEndDate,
+                                    lanes: incident.eventLanes,
+                                    reason: incident.formatDesc.length === 5 ? incident.formatDesc[2].replace('Reason : ', '') : incident.formatDesc[1].replace('Reason : ', '')
+                                };
+                                
+                                secondaryDirectionSection.data.push(event);
+                            }
+                        }
+                    }
+                }
+
                 for (const cctv of Object.values(cctvData)) {
                     if (secondaryDirectionSection.subsections.indexOf((cctv as any)[0].linkId) > -1) {
                         const camera: CCTV = {
@@ -198,6 +243,7 @@ cron.schedule('* * * * *', async () => {
                         const locations = new Set(Object.keys(vmsData[subsection.toString()]).map((x) => { return x.substring(0, x.length - 1) }));
                         locations.forEach((location: string) => {
                             const vmsGroup: VMSGroup = {
+                                id: null,
                                 address: location,
                                 vms: null,
                                 sig: [],

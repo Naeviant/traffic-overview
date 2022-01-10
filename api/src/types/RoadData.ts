@@ -22,8 +22,18 @@ export interface Section {
 }
 
 export interface Event {
+    id: string;
+    type: string;
+    severity: string;
     lat: number;
     long: number;
+    startTimestamp: number;
+    endTimestamp: number;
+    lanes: {
+        laneName: string;
+        laneStatus: string;
+    }[];
+    reason: string;
 }
 
 export interface CCTV {
@@ -36,6 +46,7 @@ export interface CCTV {
 }
 
 export interface VMSGroup {
+    id: null;
     address: string;
     lat: number;
     long: number;
