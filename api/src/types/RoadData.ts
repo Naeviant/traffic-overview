@@ -53,6 +53,7 @@ export interface CCTV {
         lat: number;
         long: number;
         url: string;
+        image: string;
         available: boolean;
     };
 }

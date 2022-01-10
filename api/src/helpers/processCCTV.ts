@@ -14,6 +14,7 @@ export default function processCCTV(cctvData: any, subsections: number[]) {
                         lat: (cctv as any)[0].latitude,
                         long: (cctv as any)[0].longitude,
                         url: (cctv as any)[0].url,
+                        image: `https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/${(cctv as any)[0].url.replace('http://public.highwaystrafficcameras.co.uk/cctvpublicaccess/html/', '').replace('.html', '')}.jpg`,
                         available: (cctv as any)[0].available
                     }
                 }
