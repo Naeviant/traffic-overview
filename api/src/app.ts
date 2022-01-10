@@ -12,9 +12,13 @@ import processVMS from './helpers/processVMS';
 import sort from './helpers/sort';
 
 dotenv.config();
+const PORT = process.env.API_PORT ?? 8080;
+const ROAD_CRON = process.env.API_ROAD_CRON ?? '* 12 * * *';
+const DATA_CRON = process.env.API_DATA_CRON ?? '* * * * *';
 
 // Update list of motorways - every 24 hours at 12pm
-cron.schedule('* 12 * * *', async () => {
+cron.schedule(ROAD_CRON, async () => {
+    const cronStart = Date.now();
     console.log('Fetching List of Roads...');
     
     const resp = await axios.get('https://www.trafficengland.com/api/network/getMotorwayJunctions');
@@ -24,11 +28,14 @@ cron.schedule('* 12 * * *', async () => {
 
     fs.writeFileSync(__dirname + '/../data/roads.json', JSON.stringify(roads, null, 4));
     
-    console.log('Finished Fetching List of Roads')
+    const cronEnd = Date.now();
+    const cronTime = cronEnd - cronStart;
+    console.log(`Finished Fetching List of Roads (${cronTime / 1000} Seconds)`)
 });
 
 // Update road data - every minute
-cron.schedule('* * * * *', async () => {
+cron.schedule(DATA_CRON, async () => {
+    const cronStart = Date.now();
     console.log('Fetching Road Data...');
 
     const roads = JSON.parse(fs.readFileSync(__dirname + '/../data/roads.json', 'utf8'));
@@ -148,7 +155,9 @@ cron.schedule('* * * * *', async () => {
         fs.writeFileSync(__dirname + `/../data/roads/${ road }.json`, JSON.stringify(data, null, 4));
     }
 
-    console.log('Finished Fetching Road Data');
+    const cronEnd = Date.now();
+    const cronTime = cronEnd - cronStart;
+    console.log(`Finished Fetching Road Data (${cronTime / 1000} Seconds)`);
 });
 
 const app = express();
@@ -173,6 +182,6 @@ app.get('/road/:road', async (req: Request, res: Response) => {
     }
 });
 
-app.listen(process.env.API_PORT, () => {
-    console.log(`Server Listening on Port ${process.env.API_PORT}`);
+app.listen(PORT, () => {
+    console.log(`Server Listening on Port ${PORT}`);
 });

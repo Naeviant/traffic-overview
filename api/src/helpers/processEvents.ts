@@ -19,7 +19,7 @@ export default function processEvents(eventData: any, subsections: number[]) {
                                 startTimestamp: incident.overallStartDate,
                                 endTimestamp: incident.overallEndDate,
                                 lanes: incident.eventLanes,
-                                reason: incident.formatDesc.length === 5 ? incident.formatDesc[2].replace('Reason : ', '') : incident.formatDesc[1].replace('Reason : ', '')
+                                reason: incident.formatDesc.length === 0 ? null : (incident.formatDesc.length === 5 ? incident.formatDesc[2].replace('Reason : ', '') : incident.formatDesc[1].replace('Reason : ', ''))
                             }
                         };
                         
