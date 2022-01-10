@@ -9,19 +9,22 @@ export default function processVMS(vmsData: any, subsections: number[]) {
                 const locations = new Set(Object.keys(vmsData[subsection.toString()]).map((x) => { return x.substring(0, x.length - 1) }));
                 locations.forEach((location: string) => {
                     const vmsGroup: VMSGroup = {
-                        id: null,
-                        address: location,
-                        vms: null,
-                        sig: [],
-                        lat: 0,
-                        long: 0
+                        interface: 'VMS',
+                        payload: {    
+                            id: null,
+                            address: location,
+                            vms: null,
+                            sig: [],
+                            lat: 0,
+                            long: 0
+                        }
                     };
                     for (const group of Object.keys(vmsData[subsection.toString()])) {
                         if (group.indexOf(location) > -1) {
                             for (const vms of vmsData[subsection.toString()][(group as string)].vmsList) {
-                                if (!vmsGroup.lat) {
-                                    vmsGroup.lat = vms.latitude;
-                                    vmsGroup.long = vms.longitude;
+                                if (!vmsGroup.payload.lat) {
+                                    vmsGroup.payload.lat = vms.latitude;
+                                    vmsGroup.payload.long = vms.longitude;
                                 }
                                 if (vms.type === 'VMS') {
                                     const info: VMS = {
@@ -32,7 +35,7 @@ export default function processVMS(vmsData: any, subsections: number[]) {
                                         cols: vms.cols,
                                         message: vms.message
                                     };
-                                    vmsGroup.vms = info;
+                                    vmsGroup.payload.vms = info;
                                 } else if (vms.type === 'SIG') {
                                     const sig: SIG = {
                                         address: vms.geogAddr,
@@ -41,7 +44,7 @@ export default function processVMS(vmsData: any, subsections: number[]) {
                                         code: SIGCode[Number(vms.code)],
                                         slip: !['A', 'B'].some((s: string) => vms.geogAddr.substr(vms.geogAddr.length - 2).indexOf(s) > -1)
                                     };
-                                    vmsGroup.sig.push(sig);
+                                    vmsGroup.payload.sig.push(sig);
                                 }
                             }
                         }

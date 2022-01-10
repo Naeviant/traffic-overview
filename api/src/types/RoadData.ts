@@ -8,50 +8,65 @@ export interface RoadData {
 };
 
 export interface Junction {
-    name: string;
-    destination: string;
+    interface: 'JUNCTION';
+    payload: {
+        name: string;
+        destination: string;
+    };
 }
 
 export interface Section {
-    id: number;
-    subsections: number[];
-    speed: number;
-    length: number;
-    speedLimits: number[];
-    data: (Event | CCTV | VMSGroup)[];
+    interface: 'SECTION';
+    payload: {
+        id: number;
+        subsections: number[];
+        speed: number;
+        length: number;
+        speedLimits: number[];
+        data: (Event | CCTV | VMSGroup)[];
+    };
 }
 
 export interface Event {
-    id: string;
-    type: string;
-    severity: string;
-    lat: number;
-    long: number;
-    startTimestamp: number;
-    endTimestamp: number;
-    lanes: {
-        laneName: string;
-        laneStatus: string;
-    }[];
-    reason: string;
+    interface: 'EVENT';
+    payload: {
+        id: string;
+        type: string;
+        severity: string;
+        lat: number;
+        long: number;
+        startTimestamp: number;
+        endTimestamp: number;
+        lanes: {
+            laneName: string;
+            laneStatus: string;
+        }[];
+        reason: string;
+    };
 }
 
 export interface CCTV {
-    id: number;
-    description: string;
-    lat: number;
-    long: number;
-    url: string;
-    available: boolean;
+    interface: 'CCTV';
+    payload: {
+        id: number;
+        description: string;
+        lat: number;
+        long: number;
+        url: string;
+        available: boolean;
+    };
 }
 
 export interface VMSGroup {
-    id: null;
-    address: string;
-    lat: number;
-    long: number;
-    vms: VMS | null;
-    sig: SIG[];
+    interface: 'VMS';
+    payload: {
+        id: null;
+        address: string;
+        lat: number;
+        long: number;
+        vms: VMS | null;
+        sig: SIG[];
+    };
 }
 
 export interface VMS {
