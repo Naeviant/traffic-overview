@@ -5,7 +5,11 @@ import fs from 'fs';
 import * as dotenv from 'dotenv';
 
 import { RoadList } from './types/RoadList';
-import { CCTV, Event, Junction, RoadData, Section, SIG, SIGCode, VMS, VMSGroup } from './types/RoadData';
+import { CCTV, Event, Junction, RoadData, Section, VMSGroup } from './types/RoadData';
+import processEvents from './helpers/processEvents';
+import processCCTV from './helpers/processCCTV';
+import processVMS from './helpers/processVMS';
+import sort from './helpers/sort';
 
 dotenv.config();
 
@@ -90,103 +94,16 @@ cron.schedule('* * * * *', async () => {
                     data: []
                 }
 
-                for (const link of Object.keys(eventData)) {
-                    if (primaryDirectionSection.subsections.map(x => x.toString()).indexOf(link) > -1) {
-                        for (const incident of eventData[link]) {
-                            if (primaryDirectionSection.data.map(x => { return x.id; }).indexOf(incident.id) === -1) {
-                                const event: Event = {
-                                    id: incident.id,
-                                    type: incident.teEventType,
-                                    severity: incident.severity,
-                                    lat: incident.latitude,
-                                    long: incident.longitude,
-                                    startTimestamp: incident.overallStartDate,
-                                    endTimestamp: incident.overallEndDate,
-                                    lanes: incident.eventLanes,
-                                    reason: incident.formatDesc.length === 5 ? incident.formatDesc[2].replace('Reason : ', '') : incident.formatDesc[1].replace('Reason : ', '')
-                                };
-                                
-                                primaryDirectionSection.data.push(event);
-                            }
-                        }
-                    }
-                }
+                const promises: [Event[], CCTV[], VMSGroup[]] = await Promise.all([
+                    processEvents(eventData, primaryDirectionSection.subsections),
+                    processCCTV(cctvData, primaryDirectionSection.subsections),
+                    processVMS(vmsData, primaryDirectionSection.subsections)
+                ]) as [Event[], CCTV[], VMSGroup[]];
+                primaryDirectionSection.data.push(...promises[0]);
+                primaryDirectionSection.data.push(...promises[1]);
+                primaryDirectionSection.data.push(...promises[2]);
 
-                for (const cctv of Object.values(cctvData)) {
-                    if (primaryDirectionSection.subsections.indexOf((cctv as any)[0].linkId) > -1) {
-                        const camera: CCTV = {
-                            id: (cctv as any)[0].id,
-                            description: (cctv as any)[0].description,
-                            lat: (cctv as any)[0].latitude,
-                            long: (cctv as any)[0].longitude,
-                            url: (cctv as any)[0].url,
-                            available: (cctv as any)[0].available
-                        }
-                        
-                        primaryDirectionSection.data.push(camera);
-                    }
-                }
-
-                for (const subsection of primaryDirectionSection.subsections) {
-                    if (Object.keys(vmsData).indexOf(subsection.toString()) > -1) {
-                        const locations = new Set(Object.keys(vmsData[subsection.toString()]).map((x) => { return x.substring(0, x.length - 1) }));
-                        locations.forEach((location: string) => {
-                            const vmsGroup: VMSGroup = {
-                                id: null,
-                                address: location,
-                                vms: null,
-                                sig: [],
-                                lat: 0,
-                                long: 0
-                            };
-                            for (const group of Object.keys(vmsData[subsection.toString()])) {
-                                if (group.indexOf(location) > -1) {
-                                    for (const vms of vmsData[subsection.toString()][(group as string)].vmsList) {
-                                        if (!vmsGroup.lat) {
-                                            vmsGroup.lat = vms.latitude;
-                                            vmsGroup.long = vms.longitude;
-                                        }
-                                        if (vms.type === 'VMS') {
-                                            const info: VMS = {
-                                                address: vms.geogAddr,
-                                                lat: vms.latitude,
-                                                long: vms.longitude,
-                                                rows: vms.rows,
-                                                cols: vms.cols,
-                                                message: vms.message
-                                            };
-                                            vmsGroup.vms = info;
-                                        } else if (vms.type === 'SIG') {
-                                            const sig: SIG = {
-                                                address: vms.geogAddr,
-                                                lat: vms.latitude,
-                                                long: vms.longitude,
-                                                code: SIGCode[Number(vms.code)],
-                                                slip: !['A', 'B'].some((s: string) => vms.geogAddr.substr(vms.geogAddr.length - 2).indexOf(s) > -1)
-                                            };
-                                            vmsGroup.sig.push(sig);
-                                        }
-                                    }
-                                }
-                            }
-                            primaryDirectionSection.data.push(vmsGroup);
-                        });
-                    }
-                }
-
-                primaryDirectionSection.data.sort((a: Event | CCTV | VMSGroup, b: Event | CCTV | VMSGroup) => {
-                    if (Math.abs(a.lat - b.lat) > Math.abs(a.long - b.long)) {
-                        if (a.lat > b.lat) {
-                            return 1;
-                        }
-                        return -1;
-                    } else {
-                        if (a.long > b.long) {
-                            return 1;
-                        }
-                        return -1;
-                    }
-                });
+                primaryDirectionSection.data.sort(sort);
 
                 data.primaryDirectionSections.push(primaryDirectionSection);
             }
@@ -200,104 +117,17 @@ cron.schedule('* * * * *', async () => {
                     speedLimits: Array.from(new Set((section as any).secondaryUpstreamJunctionSection.links.map((x: any) => { return x.speedLimit }).filter((x: number) => x != 70))),
                     data: []
                 }
+                
+                const promises: [Event[], CCTV[], VMSGroup[]] = await Promise.all([
+                    processEvents(eventData, secondaryDirectionSection.subsections),
+                    processCCTV(cctvData, secondaryDirectionSection.subsections),
+                    processVMS(vmsData, secondaryDirectionSection.subsections)
+                ]) as [Event[], CCTV[], VMSGroup[]];
+                secondaryDirectionSection.data.push(...promises[0]);
+                secondaryDirectionSection.data.push(...promises[1]);
+                secondaryDirectionSection.data.push(...promises[2]);
 
-                for (const link of Object.keys(eventData)) {
-                    if (secondaryDirectionSection.subsections.map(x => x.toString()).indexOf(link) > -1) {
-                        for (const incident of eventData[link]) {
-                            if (secondaryDirectionSection.data.map(x => { return x.id; }).indexOf(incident.id) === -1) {
-                                const event: Event = {
-                                    id: incident.id,
-                                    type: incident.teEventType,
-                                    severity: incident.severity,
-                                    lat: incident.latitude,
-                                    long: incident.longitude,
-                                    startTimestamp: incident.overallStartDate,
-                                    endTimestamp: incident.overallEndDate,
-                                    lanes: incident.eventLanes,
-                                    reason: incident.formatDesc.length === 5 ? incident.formatDesc[2].replace('Reason : ', '') : incident.formatDesc[1].replace('Reason : ', '')
-                                };
-                                
-                                secondaryDirectionSection.data.push(event);
-                            }
-                        }
-                    }
-                }
-
-                for (const cctv of Object.values(cctvData)) {
-                    if (secondaryDirectionSection.subsections.indexOf((cctv as any)[0].linkId) > -1) {
-                        const camera: CCTV = {
-                            id: (cctv as any)[0].id,
-                            description: (cctv as any)[0].description,
-                            lat: (cctv as any)[0].latitude,
-                            long: (cctv as any)[0].longitude,
-                            url: (cctv as any)[0].url,
-                            available: (cctv as any)[0].available
-                        }
-                        
-                        secondaryDirectionSection.data.push(camera);
-                    }
-                }
-
-                for (const subsection of secondaryDirectionSection.subsections) {
-                    if (Object.keys(vmsData).indexOf(subsection.toString()) > -1) {
-                        const locations = new Set(Object.keys(vmsData[subsection.toString()]).map((x) => { return x.substring(0, x.length - 1) }));
-                        locations.forEach((location: string) => {
-                            const vmsGroup: VMSGroup = {
-                                id: null,
-                                address: location,
-                                vms: null,
-                                sig: [],
-                                lat: 0,
-                                long: 0
-                            };
-                            for (const group of Object.keys(vmsData[subsection.toString()])) {
-                                if (group.indexOf(location) > -1) {
-                                    for (const vms of vmsData[subsection.toString()][(group as string)].vmsList) {
-                                        if (!vmsGroup.lat) {
-                                            vmsGroup.lat = vms.latitude;
-                                            vmsGroup.long = vms.longitude;
-                                        }
-                                        if (vms.type === 'VMS') {
-                                            const info: VMS = {
-                                                address: vms.geogAddr,
-                                                lat: vms.latitude,
-                                                long: vms.longitude,
-                                                rows: vms.rows,
-                                                cols: vms.cols,
-                                                message: vms.message
-                                            };
-                                            vmsGroup.vms = info;
-                                        } else if (vms.type === 'SIG') {
-                                            const sig: SIG = {
-                                                address: vms.geogAddr,
-                                                lat: vms.latitude,
-                                                long: vms.longitude,
-                                                code: SIGCode[Number(vms.code)],
-                                                slip: !['A', 'B'].some((s: string) => vms.geogAddr.substr(vms.geogAddr.length - 2).indexOf(s) > -1)
-                                            };
-                                            vmsGroup.sig.push(sig);
-                                        }
-                                    }
-                                }
-                            }
-                            secondaryDirectionSection.data.push(vmsGroup);
-                        });
-                    }
-                }
-
-                secondaryDirectionSection.data.sort((a: Event | CCTV | VMSGroup, b: Event | CCTV | VMSGroup) => {
-                    if (Math.abs(a.lat - b.lat) > Math.abs(a.long - b.long)) {
-                        if (a.lat > b.lat) {
-                            return 1;
-                        }
-                        return -1;
-                    } else {
-                        if (a.long > b.long) {
-                            return 1;
-                        }
-                        return -1;
-                    }
-                });
+                secondaryDirectionSection.data.sort(sort);
 
                 data.secondaryDirectionSections.push(secondaryDirectionSection);
             }
