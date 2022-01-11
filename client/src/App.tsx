@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import {
   Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
   Container, 
   FormControl, 
   FormLabel, 
@@ -25,13 +29,15 @@ function App() {
         setRoads(resp.data.data);
       });
     } 
-    if ((!data && road) || (road !== data.road)) {
+    if ((!data && road) || (data && road !== data.road)) {
       axios.get(`/road/${ road }`).then((resp: AxiosResponse) => {
         setData(resp.data.data);
       });
     }
   });
 
+  console.log(data);
+  
   return (
     <div className="App">
       <Container>
@@ -89,10 +95,56 @@ function App() {
                       <>
                         <Grid item xs={5}>
                           <Typography align="center" variant="body2" color="initial">Average Speed: { Math.round(section.payload.speed) }mph</Typography>
+                          {
+                            section.payload.data.map((info: any, index: number) => (
+                              info.interface === "CCTV"
+                              ?
+                                <Card>
+                                  <CardContent>
+                                    <Typography variant="h5" color="initial">
+                                      CCTV Image
+                                    </Typography>
+                                    <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                                      {
+                                        info.payload.description
+                                      }
+                                    </Typography>
+                                  </CardContent>
+                                  <CardActions>
+                                    <Button size="small" href={ info.payload.image } target="_blank">View Image</Button>
+                                    <Button size="small" href={ `https://www.google.com/maps?q=${ info.payload.lat }+${ info.payload.long }` } target="_blank">See Location</Button>
+                                  </CardActions>
+                                </Card>
+                              : <></>
+                            ))
+                          }
                         </Grid>
                         <Grid item xs={2}></Grid>
                         <Grid item xs={5}>
                           <Typography align="center" variant="body2" color="initial">Average Speed: { Math.round(data.secondaryDirectionSections[index].payload.speed) }mph</Typography>
+                          {
+                            data.secondaryDirectionSections[index].payload.data.map((info: any, index: number) => (
+                              info.interface === "CCTV"
+                              ?
+                                <Card>
+                                  <CardContent>
+                                    <Typography variant="h5" color="initial">
+                                      CCTV Image
+                                    </Typography>
+                                    <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                                      {
+                                        info.payload.description
+                                      }
+                                    </Typography>
+                                  </CardContent>
+                                  <CardActions>
+                                    <Button size="small" href={ info.payload.image } target="_blank">View Image</Button>
+                                    <Button size="small" href={ `https://www.google.com/maps?q=${ info.payload.lat }+${ info.payload.long }` } target="_blank">See Location</Button>
+                                  </CardActions>
+                                </Card>
+                              : <></>
+                            ))
+                          }
                         </Grid>
                       </>
                   ))
