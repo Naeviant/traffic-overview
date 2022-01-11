@@ -139,7 +139,39 @@ function App() {
                                       <Button size="small" href={ `https://www.google.com/maps?q=${ info.payload.lat }+${ info.payload.long }` } target="_blank">See Location</Button>
                                     </CardActions>
                                   </Card>
-                                : <></>
+                                : info.interface === "EVENT"
+                                  ?
+                                      <Card>
+                                        <CardContent>
+                                          <Typography variant="h5" color="initial">
+                                            { info.payload.type }
+                                          </Typography>
+                                          <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                                            {
+                                              info.payload.reason
+                                            }
+                                          </Typography>
+                                          <table>
+                                            <tbody>
+                                              <tr>
+                                                {
+                                                  info.payload.lanes.map((lane: any, index: number) => (
+                                                    <td key={ index }>{ lane.laneName }</td>
+                                                  ))
+                                                }
+                                              </tr>
+                                              <tr>
+                                                {
+                                                  info.payload.lanes.map((lane: any, index: number) => (
+                                                    <td key={ index }>{ lane.laneStatus }</td>
+                                                  ))
+                                                }
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                        </CardContent>
+                                      </Card>
+                                  : <></>
                             ))
                           }
                         </Grid>
@@ -190,7 +222,39 @@ function App() {
                                       <Button size="small" href={ `https://www.google.com/maps?q=${ info.payload.lat }+${ info.payload.long }` } target="_blank">See Location</Button>
                                     </CardActions>
                                   </Card>
-                                : <></>
+                                : info.interface === "EVENT"
+                                  ?
+                                      <Card>
+                                        <CardContent>
+                                          <Typography variant="h5" color="initial">
+                                            { info.payload.type }
+                                          </Typography>
+                                          <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                                            {
+                                              info.payload.reason
+                                            }
+                                          </Typography>
+                                          <table>
+                                            <tbody>
+                                              <tr>
+                                                {
+                                                  info.payload.lanes.map((lane: any, index: number) => (
+                                                    <td key={ index }>{ lane.laneName }</td>
+                                                  ))
+                                                }
+                                              </tr>
+                                              <tr>
+                                                {
+                                                  info.payload.lanes.map((lane: any, index: number) => (
+                                                    <td key={ index }>{ lane.laneStatus }</td>
+                                                  ))
+                                                }
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                        </CardContent>
+                                      </Card>
+                                  : <></>
                             ))
                           }
                         </Grid>
