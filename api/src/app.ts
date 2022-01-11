@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import cron from 'node-cron';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import fs from 'fs';
 import * as dotenv from 'dotenv';
 
@@ -40,33 +40,40 @@ cron.schedule(DATA_CRON, async () => {
 
     const roads = JSON.parse(fs.readFileSync(__dirname + '/../data/roads.json', 'utf8'));
 
+    const sectionsReq: Promise<AxiosResponse>[] = roads.map((x: string) => { return axios.get(`https://www.trafficengland.com/api/network/getJunctionSections?roadName=${ x }`); });
+    const sectionsRes: AxiosResponse[] = await axios.all(sectionsReq);
+    const sections = Object.fromEntries(roads.map((x: string) => [x, sectionsRes[roads.indexOf(x)].data]));
+
+    const ends: { road: string, startJunctionId: number, endJunctionId: number }[] = [];
     for (const road of roads) {
-        const sectionResp = await axios.get(`https://www.trafficengland.com/api/network/getJunctionSections?roadName=${ road }`);
-        const sections = sectionResp.data;
+        const startJunctionKey = Object.keys(sections[road])[0];
+        const endJunctionKey = Object.keys(sections[road])[Object.keys(sections[road]).length - 1];
+        ends.push({
+            road: road,
+            startJunctionId:
+                sections[road][startJunctionKey].primaryUpstreamJunctionSection?.downStreamJunctionId ??
+                sections[road][startJunctionKey].primaryDownstreamJunctionSection?.upStreamJunctionId,
+            endJunctionId:
+                sections[road][endJunctionKey].primaryUpstreamJunctionSection?.downStreamJunctionId ??
+                sections[road][endJunctionKey].primaryDownstreamJunctionSection?.upStreamJunctionId
+        });
+    }
 
-        const startJunctionKey = Object.keys(sections)[0];
-        const endJunctionKey = Object.keys(sections)[Object.keys(sections).length - 1];
-        const startJunctionId =
-            sections[startJunctionKey].primaryUpstreamJunctionSection?.downStreamJunctionId ??
-            sections[startJunctionKey].primaryDownstreamJunctionSection?.upStreamJunctionId;
-        const endJunctionId =
-            sections[endJunctionKey].primaryUpstreamJunctionSection?.downStreamJunctionId ??
-            sections[endJunctionKey].primaryDownstreamJunctionSection?.upStreamJunctionId;
+    const dataReq: Promise<AxiosResponse>[] = ends.map((x) => { return [
+        axios.get(
+            `https://www.trafficengland.com/api/events/getByJunctionInterval?road=${ x.road }&fromId=${ x.startJunctionId }&toId=${ x.endJunctionId }&events=CONGESTION,INCIDENT,ROADWORKS,WEATHER,MAJOR_ORGANISED_EVENTS,ABNORMAL_LOADS&includeUnconfirmedRoadworks=true`,
+        ),
+        axios.get(
+            `https://www.trafficengland.com/api/cctv/getByJunctionInterval?road=${ x.road }&fromId=${ x.startJunctionId }&toId=${ x.endJunctionId }`,
+        ),
+        axios.get(
+            `https://www.trafficengland.com/api/vms/getByJunctionInterval?road=${ x.road }&fromId=${ x.startJunctionId }&toId=${ x.endJunctionId }`,
+        )
+    ]}).flat();
+    const dataRes: AxiosResponse[] = await axios.all(dataReq);
 
-        const eventsReq= axios.get(
-            `https://www.trafficengland.com/api/events/getByJunctionInterval?road=${ road }&fromId=${startJunctionId}&toId=${endJunctionId}&events=CONGESTION,INCIDENT,ROADWORKS,WEATHER,MAJOR_ORGANISED_EVENTS,ABNORMAL_LOADS&includeUnconfirmedRoadworks=true`,
-        );
-        const cctvReq = axios.get(
-            `https://www.trafficengland.com/api/cctv/getByJunctionInterval?road=${ road }&fromId=${startJunctionId}&toId=${endJunctionId}`,
-        );
-        const vmsReq = axios.get(
-            `https://www.trafficengland.com/api/vms/getByJunctionInterval?road=${ road }&fromId=${startJunctionId}&toId=${endJunctionId}`,
-        );
-
-        const resp = await axios.all([eventsReq, cctvReq, vmsReq]);
-        const eventData = resp[0].data;
-        const cctvData = resp[1].data;
-        const vmsData = resp[2].data;
+    for (let i = 0; i < roads.length; i++) {
+        const road = roads[i];
 
         const data: RoadData = {
             road: road,
@@ -111,9 +118,9 @@ cron.schedule(DATA_CRON, async () => {
                 }
 
                 const promises: [Event[], CCTV[], VMSGroup[]] = await Promise.all([
-                    processEvents(eventData, primaryDirectionSection.payload.subsections),
-                    processCCTV(cctvData, primaryDirectionSection.payload.subsections),
-                    processVMS(vmsData, primaryDirectionSection.payload.subsections)
+                    processEvents(dataRes[(i * 3)], primaryDirectionSection.payload.subsections),
+                    processCCTV(dataRes[(i * 3) + 1], primaryDirectionSection.payload.subsections),
+                    processVMS(dataRes[(i * 3) + 2], primaryDirectionSection.payload.subsections)
                 ]) as [Event[], CCTV[], VMSGroup[]];
                 primaryDirectionSection.payload.data.push(...promises[0]);
                 primaryDirectionSection.payload.data.push(...promises[1]);
@@ -138,9 +145,9 @@ cron.schedule(DATA_CRON, async () => {
                 }
                 
                 const promises: [Event[], CCTV[], VMSGroup[]] = await Promise.all([
-                    processEvents(eventData, secondaryDirectionSection.payload.subsections),
-                    processCCTV(cctvData, secondaryDirectionSection.payload.subsections),
-                    processVMS(vmsData, secondaryDirectionSection.payload.subsections)
+                    processEvents(dataRes[(i * 3)], secondaryDirectionSection.payload.subsections),
+                    processCCTV(dataRes[(i * 3) + 1], secondaryDirectionSection.payload.subsections),
+                    processVMS(dataRes[(i * 3) + 2], secondaryDirectionSection.payload.subsections)
                 ]) as [Event[], CCTV[], VMSGroup[]];
                 secondaryDirectionSection.payload.data.push(...promises[0]);
                 secondaryDirectionSection.payload.data.push(...promises[1]);
