@@ -18,10 +18,14 @@
   },
   "homepage": "https://github.com/Naeviant/traffic-overview#readme",
   "dependencies": {
-    "@types/node-cron": "^3.0.1",
     "axios": "^0.24.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.2",
     "node-cron": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.8",
+    "@types/express": "^4.17.13",
+    "@types/node-cron": "^3.0.1"
   }
 }

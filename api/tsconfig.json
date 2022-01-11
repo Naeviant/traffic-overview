@@ -8,6 +8,9 @@
     "resolveJsonModule": true,
     "sourceRoot": "./src",
     "inlineSourceMap": true,
+    "lib": [
+      "es2017"
+    ]
   },
   "include": [
     "src/**/*"
