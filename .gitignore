@@ -1,11 +1,11 @@
 # dependencies
-/node_modules
 /api/node_modules
+/client/node_modules
 
 # production
-/dist
 /api/dist
+/client/dist
 
 # misc
-.env
+/api/.env
 /api/data

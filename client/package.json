@@ -1,8 +1,7 @@
 {
-  "name": "traffic-overview",
+  "name": "traffic-overview-api",
   "version": "1.0.0",
-  "description": "An unofficial rewrite of National Highway's Traffic England service.",
-  "main": "index.js",
+  "description": "The API for an unofficial rewrite of National Highway's Traffic England service.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Naeviant/traffic-overview.git"
@@ -13,7 +12,6 @@
     "url": "https://github.com/Naeviant/traffic-overview/issues"
   },
   "homepage": "https://github.com/Naeviant/traffic-overview#readme",
-  "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
