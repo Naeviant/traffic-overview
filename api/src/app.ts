@@ -70,7 +70,7 @@ cron.schedule(DATA_CRON, async () => {
             `https://www.trafficengland.com/api/vms/getByJunctionInterval?road=${ x.road }&fromId=${ x.startJunctionId }&toId=${ x.endJunctionId }`,
         )
     ]}).flat();
-    const dataRes: AxiosResponse[] = await axios.all(dataReq);
+    const dataRes: any[] = (await axios.all(dataReq)).map((x: AxiosResponse) => x.data);
 
     for (let i = 0; i < roads.length; i++) {
         const road = roads[i];
@@ -84,7 +84,7 @@ cron.schedule(DATA_CRON, async () => {
             circularRoad: (Object.values(sections as any)[0] as any).circularRoad
         };
 
-        for (const section of Object.values(sections)) {
+        for (const section of Object.values(sections[road])) {
             if ((section as any).junctionName === 'M60') continue;
 
             const primaryDirectionJunction: Junction = {
@@ -116,7 +116,7 @@ cron.schedule(DATA_CRON, async () => {
                         data: []
                     }
                 }
-
+                
                 const promises: [Event[], CCTV[], VMSGroup[]] = await Promise.all([
                     processEvents(dataRes[(i * 3)], primaryDirectionSection.payload.subsections),
                     processCCTV(dataRes[(i * 3) + 1], primaryDirectionSection.payload.subsections),
