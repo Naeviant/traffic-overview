@@ -142,7 +142,31 @@ function App() {
                                     <Button size="small" href={ `https://www.google.com/maps?q=${ info.payload.lat }+${ info.payload.long }` } target="_blank">See Location</Button>
                                   </CardActions>
                                 </Card>
-                              : <></>
+                              : info.interface === "VMS"
+                                ?
+                                  <Card>
+                                    <CardContent>
+                                      {
+                                        info.payload.vms 
+                                        ? 
+                                          <Typography align="center" variant="body1" color="initial">{ info.payload.vms.message.split('\n').map((x: string, index: number) => <span key={ index }>{ x }<br /></span>) }</Typography>
+                                        : <></>
+                                      }
+                                      {
+                                        info.payload.sig.map((sig: any, index: any) => (
+                                          sig.slip 
+                                          ?
+                                            <Typography variant="caption" color="initial">{ sig.code }</Typography>
+                                          :
+                                            <Typography variant="caption" color="initial">{ sig.code }</Typography>
+                                        ))
+                                      }
+                                    </CardContent>
+                                    <CardActions>
+                                      <Button size="small" href={ `https://www.google.com/maps?q=${ info.payload.lat }+${ info.payload.long }` } target="_blank">See Location</Button>
+                                    </CardActions>
+                                  </Card>
+                                : <></>
                             ))
                           }
                         </Grid>
