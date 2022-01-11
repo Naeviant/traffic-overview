@@ -64,9 +64,12 @@ function VMS(props: VMSProps) {
                         {
                             sig.map((sig: any, index: number) => (
                                 <div style={{
-                                    margin: '0 4px'
+                                    margin: '0 2px',
+                                    padding: '4px',
+                                    height: '30px',
+                                    backgroundColor: sig.slip ? 'red' : 'transparent'
                                 }}>
-                                    <img src="/images/sig/temp.png" alt="SIG Screen" style={{ width: '30px', height: '30px' }} />
+                                    <img src={`/images/sig/AMI/${ sig.code }.png`} alt="SIG Screen" style={{ width: '30px', height: '30px' }} />
                                 </div>
                             ))
                         }
