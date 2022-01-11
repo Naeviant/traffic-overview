@@ -77,11 +77,11 @@ cron.schedule(DATA_CRON, async () => {
 
         const data: RoadData = {
             road: road,
-            primaryDirection: (Object.values(sections as any)[0] as any).primaryDirection,
-            secondaryDirection: (Object.values(sections as any)[0] as any).secondaryDirection,
+            primaryDirection: (Object.values(sections[road] as any)[0] as any).primaryDirection,
+            secondaryDirection: (Object.values(sections[road] as any)[0] as any).secondaryDirection,
             primaryDirectionSections: [],
             secondaryDirectionSections: [],
-            circularRoad: (Object.values(sections as any)[0] as any).circularRoad
+            circularRoad: (Object.values(sections[road] as any)[0] as any).circularRoad
         };
 
         for (const section of Object.values(sections[road])) {
