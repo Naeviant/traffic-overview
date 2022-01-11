@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import {
   Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Container, 
-  FormControl, 
-  FormLabel, 
-  Grid,
-  MenuItem,
-  Select, Typography
+  Container,
+  Grid
 } from '@mui/material';
+
+import DirectionHeader from './DirectionHeader';
+import RoadHeader from './RoadHeader';
+import JunctionHeader from './JunctionHeader';
+import AverageSpeed from './AverageSpeed';
+import CCTV from './CCTV';
+import Event from './Event';
+import VMS from './VMS';
+import RoadSelector from './RoadSelector';
 
 function App() {
   const [road, setRoad] = useState<(string)>("");
@@ -35,46 +36,24 @@ function App() {
       });
     }
   });
-
-  console.log(data);
   
   return (
     <div className="App">
       <Container>
-        <Box sx={{ bgcolor: "#CCCCCC" }}>
-          <FormControl>
-            <FormLabel id="road-input-label">Road</FormLabel>
-            <Select
-              labelId="road-input-label"
-              id="road-input"
-              value={ road }
-              label="Road"
-              onChange={ roadChange }
-            >
-              {
-                roads.map((road) => (
-                  <MenuItem key={ road } value={ road }>{ road }</MenuItem>
-                ))
-              }
-            </Select>
-          </FormControl>
+        <Box sx={{ bgcolor: "#EEEEEE" }}>
+          <RoadSelector road={ road } roads={ roads } setRoad={ roadChange } />
           {
             data 
             ?
               <Grid container spacing={1}>
                 <Grid item xs={5}>
-                  <Typography align="center" variant="h4" color="initial">{ data.primaryDirection }</Typography>
+                  <DirectionHeader direction={ data.primaryDirection } />
                 </Grid>
                 <Grid item xs={2}>
-                  <Typography align="center" variant="h3" color="initial">{ data.road }</Typography>
-                  {
-                    data.circularRoad
-                    ? <Typography align="center" variant="body2" color="initial">Ring Road</Typography>
-                    : <></>
-                  }
+                  <RoadHeader road={ data.road } ringRoad={ data.circularRoad } />
                 </Grid>
                 <Grid item xs={5}>
-                  <Typography align="center" variant="h4" color="initial">{ data.secondaryDirection }</Typography>
+                  <DirectionHeader direction={ data.secondaryDirection } />
                 </Grid>
                 {
                   data.primaryDirectionSections.map((section: any, index: number) => (
@@ -82,178 +61,48 @@ function App() {
                     ?
                       <>
                         <Grid item xs={5}>
-                          <Typography align="center" variant="h6" color="initial">{ section.payload.destination }</Typography>
+                          <JunctionHeader text={ section.payload.destination } />
                         </Grid>
                         <Grid item xs={2}>
-                          <Typography align="center" variant="h5" color="initial">{ section.payload.name }</Typography>
+                          <JunctionHeader text={ section.payload.name } />
                         </Grid>
                         <Grid item xs={5}>
-                          <Typography align="center" variant="h6" color="initial">{ data.secondaryDirectionSections[index].payload.destination }</Typography>
+                          <JunctionHeader text={ data.secondaryDirectionSections[index].payload.destination } />
                         </Grid>
                       </>
                     : 
                       <>
                         <Grid item xs={5}>
-                          <Typography align="center" variant="body2" color="initial">Average Speed: { Math.round(section.payload.speed) }mph</Typography>
+                          <AverageSpeed speed={ Math.round(section.payload.speed)} />
                           {
                             section.payload.data.map((info: any, index: number) => (
                               info.interface === "CCTV"
-                              ?
-                                <Card>
-                                  <CardContent>
-                                    <Typography variant="h5" color="initial">
-                                      CCTV Image
-                                    </Typography>
-                                    <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                                      {
-                                        info.payload.description
-                                      }
-                                    </Typography>
-                                  </CardContent>
-                                  <CardActions>
-                                    <Button size="small" href={ info.payload.image } target="_blank">View Image</Button>
-                                    <Button size="small" href={ `https://www.google.com/maps?q=${ info.payload.lat }+${ info.payload.long }` } target="_blank">See Location</Button>
-                                  </CardActions>
-                                </Card>
+                              ? 
+                                <CCTV lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
                               : info.interface === "VMS"
                                 ?
-                                  <Card>
-                                    <CardContent>
-                                      {
-                                        info.payload.vms 
-                                        ? 
-                                          <Typography align="center" variant="body1" color="initial">{ info.payload.vms.message.split('\n').map((x: string, index: number) => <span key={ index }>{ x }<br /></span>) }</Typography>
-                                        : <></>
-                                      }
-                                      {
-                                        info.payload.sig.map((sig: any, index: any) => (
-                                          sig.slip 
-                                          ?
-                                            <Typography variant="caption" color="initial">{ sig.code }</Typography>
-                                          :
-                                            <Typography variant="caption" color="initial">{ sig.code }</Typography>
-                                        ))
-                                      }
-                                    </CardContent>
-                                    <CardActions>
-                                      <Button size="small" href={ `https://www.google.com/maps?q=${ info.payload.lat }+${ info.payload.long }` } target="_blank">See Location</Button>
-                                    </CardActions>
-                                  </Card>
+                                  <VMS lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
                                 : info.interface === "EVENT"
                                   ?
-                                      <Card>
-                                        <CardContent>
-                                          <Typography variant="h5" color="initial">
-                                            { info.payload.type }
-                                          </Typography>
-                                          <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                                            {
-                                              info.payload.reason
-                                            }
-                                          </Typography>
-                                          <table>
-                                            <tbody>
-                                              <tr>
-                                                {
-                                                  info.payload.lanes.map((lane: any, index: number) => (
-                                                    <td key={ index }>{ lane.laneName }</td>
-                                                  ))
-                                                }
-                                              </tr>
-                                              <tr>
-                                                {
-                                                  info.payload.lanes.map((lane: any, index: number) => (
-                                                    <td key={ index }>{ lane.laneStatus }</td>
-                                                  ))
-                                                }
-                                              </tr>
-                                            </tbody>
-                                          </table>
-                                        </CardContent>
-                                      </Card>
+                                      <Event type={ info.payload.type } reason={ info.payload.reason } severity={ info.payload.severity } lanes={ info.payload.lanes } />
                                   : <></>
                             ))
                           }
                         </Grid>
                         <Grid item xs={2}></Grid>
                         <Grid item xs={5}>
-                          <Typography align="center" variant="body2" color="initial">Average Speed: { Math.round(data.secondaryDirectionSections[index].payload.speed) }mph</Typography>
+                          <AverageSpeed speed={ Math.round(data.secondaryDirectionSections[index].payload.speed)} />
                           {
                             data.secondaryDirectionSections[index].payload.data.map((info: any, index: number) => (
                               info.interface === "CCTV"
                               ?
-                                <Card>
-                                  <CardContent>
-                                    <Typography variant="h5" color="initial">
-                                      CCTV Image
-                                    </Typography>
-                                    <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                                      {
-                                        info.payload.description
-                                      }
-                                    </Typography>
-                                  </CardContent>
-                                  <CardActions>
-                                    <Button size="small" href={ info.payload.image } target="_blank">View Image</Button>
-                                    <Button size="small" href={ `https://www.google.com/maps?q=${ info.payload.lat }+${ info.payload.long }` } target="_blank">See Location</Button>
-                                  </CardActions>
-                                </Card>
+                                <CCTV lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
                               : info.interface === "VMS"
                                 ?
-                                  <Card>
-                                    <CardContent>
-                                      {
-                                        info.payload.vms 
-                                        ? 
-                                          <Typography align="center" variant="body1" color="initial">{ info.payload.vms.message.split('\n').map((x: string, index: number) => <span key={ index }>{ x }<br /></span>) }</Typography>
-                                        : <></>
-                                      }
-                                      {
-                                        info.payload.sig.map((sig: any, index: any) => (
-                                          sig.slip 
-                                          ?
-                                            <Typography variant="caption" color="initial">{ sig.code }</Typography>
-                                          :
-                                            <Typography variant="caption" color="initial">{ sig.code }</Typography>
-                                        ))
-                                      }
-                                    </CardContent>
-                                    <CardActions>
-                                      <Button size="small" href={ `https://www.google.com/maps?q=${ info.payload.lat }+${ info.payload.long }` } target="_blank">See Location</Button>
-                                    </CardActions>
-                                  </Card>
+                                  <VMS lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
                                 : info.interface === "EVENT"
                                   ?
-                                      <Card>
-                                        <CardContent>
-                                          <Typography variant="h5" color="initial">
-                                            { info.payload.type }
-                                          </Typography>
-                                          <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                                            {
-                                              info.payload.reason
-                                            }
-                                          </Typography>
-                                          <table>
-                                            <tbody>
-                                              <tr>
-                                                {
-                                                  info.payload.lanes.map((lane: any, index: number) => (
-                                                    <td key={ index }>{ lane.laneName }</td>
-                                                  ))
-                                                }
-                                              </tr>
-                                              <tr>
-                                                {
-                                                  info.payload.lanes.map((lane: any, index: number) => (
-                                                    <td key={ index }>{ lane.laneStatus }</td>
-                                                  ))
-                                                }
-                                              </tr>
-                                            </tbody>
-                                          </table>
-                                        </CardContent>
-                                      </Card>
+                                    <Event type={ info.payload.type } reason={ info.payload.reason } severity={ info.payload.severity } lanes={ info.payload.lanes } />
                                   : <></>
                             ))
                           }
