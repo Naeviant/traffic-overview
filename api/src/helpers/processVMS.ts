@@ -1,59 +1,54 @@
 import { VMSGroup, VMS, SIG } from "../types/RoadData";
 
-export default function processVMS(vmsData: any, subsections: number[]) {
+export default function processVMS(vmsData: any[], subsections: number[]) {
     return new Promise((resolve) => {
         const data: VMSGroup[] = [];
 
-        for (const subsection of subsections) {
-            if (Object.keys(vmsData).indexOf(subsection.toString()) > -1) {
-                const locations = new Set(Object.keys(vmsData[subsection.toString()]).map((x) => { return x.substring(0, x.length - 1) }));
-                locations.forEach((location: string) => {
-                    const vmsGroup: VMSGroup = {
-                        interface: 'VMS',
-                        payload: {    
-                            id: null,
-                            address: location,
-                            vms: null,
-                            sig: [],
-                            lat: 0,
-                            long: 0
-                        }
-                    };
-                    for (const group of Object.keys(vmsData[subsection.toString()])) {
-                        if (group.indexOf(location) > -1) {
-                            for (const vms of vmsData[subsection.toString()][(group as string)].vmsList) {
-                                if (!vmsGroup.payload.lat) {
-                                    vmsGroup.payload.lat = vms.latitude;
-                                    vmsGroup.payload.long = vms.longitude;
-                                }
-                                if (vms.type === 'VMS') {
-                                    const info: VMS = {
-                                        address: vms.geogAddr,
-                                        lat: vms.latitude,
-                                        long: vms.longitude,
-                                        rows: vms.rows,
-                                        cols: vms.cols,
-                                        message: vms.message
-                                    };
-                                    vmsGroup.payload.vms = info;
-                                } else if (vms.type === 'SIG') {
-                                    const sig: SIG = {
-                                        address: vms.geogAddr,
-                                        lat: vms.latitude,
-                                        long: vms.longitude,
-                                        code: convertCode(Number(vms.code)),
-                                        type: vms.genericType,
-                                        slip: !['A', 'B'].some((s: string) => vms.geogAddr.substr(vms.geogAddr.length - 2).indexOf(s) > -1)
-                                    };
-                                    vmsGroup.payload.sig.push(sig);
-                                    vmsGroup.payload.sig.sort((a: any, b: any) => (a.slip === b.slip) ? 0 : a.slip ? -1 : 1);
-                                }
-                            }
-                        }
-                    }
-                    data.push(vmsGroup);
-                });
+        for (const collection of vmsData.map(x => x.vmsList).filter(x => subsections.indexOf(x[0].linkId) > -1)) {
+          let vms: VMS | null = null;
+          if (collection[0].type === 'VMS') {
+            vms = {
+              address: collection[0].geogAddr,
+              lat: collection[0].latitude,
+              long: collection[0].longitude,
+              rows: collection[0].rows,
+              cols: collection[0].cols,
+              message: collection[0].message
             }
+          }
+
+          const sig: SIG[] = collection.filter((x: any) => x.type === 'SIG' || x.type === 'AMI').map((x: any) => {
+            return {
+              address: x.geogAddr,
+              lat: x.latitude,
+              long: x.longitude,
+              code: convertCode(Number(x.code)),
+              type: x.genericType,
+              slip: !['A', 'B'].some((s: string) => x.geogAddr.substr(x.geogAddr.length - 2).indexOf(s) > -1)
+            }
+          });
+
+          const vmsGroup: VMSGroup = {
+              interface: 'VMS',
+              payload: {    
+                  id: null,
+                  address: collection[0].geogAddr.split('/')[0] + '/' + collection[0].geogAddr.split('/')[1].split('A')[0].split('B')[0].split('J')[0].split('K')[0].split('L')[0].split('M')[0],
+                  vms: vms,
+                  sig: sig,
+                  lat: collection[0].latitude,
+                  long: collection[0].longitude
+              }
+          };
+
+          data.push(vmsGroup);
+        }
+
+        for (let i = 0; i < data.length - 1; i++) {
+          if (data[i].payload.address === data[i + 1].payload.address) {
+            data[i].payload.sig = data[i].payload.sig.concat(data[i + 1].payload.sig);
+            data.splice(i + 1, 1);
+            data[i].payload.sig.sort((a: any, b: any) => (a.slip === b.slip) ? 0 : a.slip ? -1 : 1);
+          }
         }
 
         resolve(data);

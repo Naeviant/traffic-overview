@@ -44,37 +44,20 @@ cron.schedule(DATA_CRON, async () => {
     const sectionsRes: AxiosResponse[] = await axios.all(sectionsReq);
     const sections = Object.fromEntries(roads.map((x: string) => [x, sectionsRes[roads.indexOf(x)].data]));
 
-    const ends: { road: string, startJunctionId: number, endJunctionId: number }[] = [];
-    for (const road of roads) {
-        const startJunctionKey = Object.keys(sections[road])[0];
-        const endJunctionKey = Object.keys(sections[road])[Object.keys(sections[road]).length - 1];
-        ends.push({
-            road: road,
-            startJunctionId:
-                sections[road][startJunctionKey].primaryUpstreamJunctionSection?.downStreamJunctionId ??
-                sections[road][startJunctionKey].primaryDownstreamJunctionSection?.upStreamJunctionId,
-            endJunctionId:
-                sections[road][endJunctionKey].primaryUpstreamJunctionSection?.downStreamJunctionId ??
-                sections[road][endJunctionKey].primaryDownstreamJunctionSection?.upStreamJunctionId
-        });
-    }
-
-    const dataReq: Promise<AxiosResponse>[] = ends.map((x) => { return [
+    const dataReq: Promise<AxiosResponse>[] = [
         axios.get(
-            `https://www.trafficengland.com/api/events/getByJunctionInterval?road=${ x.road }&fromId=${ x.startJunctionId }&toId=${ x.endJunctionId }&events=CONGESTION,INCIDENT,ROADWORKS,WEATHER,MAJOR_ORGANISED_EVENTS,ABNORMAL_LOADS&includeUnconfirmedRoadworks=true`,
+            'https://www.trafficengland.com/api/events/getToBounds?bbox=-5.7,56.0,1.65,50&events=CONGESTION,FULL_CLOSURES,ROADWORKS,INCIDENT,WEATHER,MAJOR_ORGANISED_EVENTS,ABNORMAL_LOADS',
         ),
         axios.get(
-            `https://www.trafficengland.com/api/cctv/getByJunctionInterval?road=${ x.road }&fromId=${ x.startJunctionId }&toId=${ x.endJunctionId }`,
+            'https://www.trafficengland.com/api/cctv/getToBounds?bbox=-5.7,56.0,1.65,50',
         ),
         axios.get(
-            `https://www.trafficengland.com/api/vms/getByJunctionInterval?road=${ x.road }&fromId=${ x.startJunctionId }&toId=${ x.endJunctionId }`,
+            'https://www.trafficengland.com/api/vms/getToBounds?bbox=-5.7,56.0,1.65,50',
         )
-    ]}).flat();
+    ];
     const dataRes: any[] = (await axios.all(dataReq)).map((x: AxiosResponse) => x.data);
 
-    for (let i = 0; i < roads.length; i++) {
-        const road = roads[i];
-
+    for (const road of roads) {
         const data: RoadData = {
             road: road,
             primaryDirection: (Object.values(sections[road] as any)[0] as any).primaryDirection,
@@ -118,9 +101,9 @@ cron.schedule(DATA_CRON, async () => {
                 }
                 
                 const promises: [Event[], CCTV[], VMSGroup[]] = await Promise.all([
-                    processEvents(dataRes[(i * 3)], primaryDirectionSection.payload.subsections),
-                    processCCTV(dataRes[(i * 3) + 1], primaryDirectionSection.payload.subsections),
-                    processVMS(dataRes[(i * 3) + 2], primaryDirectionSection.payload.subsections)
+                    processEvents(dataRes[0], primaryDirectionSection.payload.subsections),
+                    processCCTV(dataRes[1], primaryDirectionSection.payload.subsections),
+                    processVMS(dataRes[2], primaryDirectionSection.payload.subsections)
                 ]) as [Event[], CCTV[], VMSGroup[]];
                 primaryDirectionSection.payload.data.push(...promises[0]);
                 primaryDirectionSection.payload.data.push(...promises[1]);
@@ -145,9 +128,9 @@ cron.schedule(DATA_CRON, async () => {
                 }
                 
                 const promises: [Event[], CCTV[], VMSGroup[]] = await Promise.all([
-                    processEvents(dataRes[(i * 3)], secondaryDirectionSection.payload.subsections),
-                    processCCTV(dataRes[(i * 3) + 1], secondaryDirectionSection.payload.subsections),
-                    processVMS(dataRes[(i * 3) + 2], secondaryDirectionSection.payload.subsections)
+                    processEvents(dataRes[0], secondaryDirectionSection.payload.subsections),
+                    processCCTV(dataRes[1], secondaryDirectionSection.payload.subsections),
+                    processVMS(dataRes[2], secondaryDirectionSection.payload.subsections)
                 ]) as [Event[], CCTV[], VMSGroup[]];
                 secondaryDirectionSection.payload.data.push(...promises[0]);
                 secondaryDirectionSection.payload.data.push(...promises[1]);
