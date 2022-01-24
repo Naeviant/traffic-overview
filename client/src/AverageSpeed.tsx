@@ -15,7 +15,10 @@ function AverageSpeed(props: AverageSpeedProps) {
     return (
         <Paper sx={{ 
             padding: 1,
-            margin: 1
+            margin: 1,
+            width: 'calc(100% - 32px);',
+            backgroundColor: '#111111',
+            color: '#AAAAAA'
         }}>
             <Grid container direction="row" alignItems="center">
                 <Grid item>

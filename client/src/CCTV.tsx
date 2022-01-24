@@ -21,7 +21,10 @@ function CCTV(props: CCTVProps) {
     return (
         <Paper sx={{ 
             padding: 1,
-            margin: 1
+            margin: 1,
+            width: 'calc(100% - 32px);',
+            backgroundColor: '#111111',
+            color: '#AAAAAA'
         }}>
             <Grid container direction="row" alignItems="center">
                 <Grid item>
@@ -44,7 +47,7 @@ function CCTV(props: CCTVProps) {
                             position: 'relative',
                             top: '2px',
                             paddingRight: 1,
-                            color: '#000000'
+                            color: '#AAAAAA'
                         }} />
                     </a>
                     <a href={ `https://www.google.com/maps?q=${ lat }+${ long }` } target="_blank" rel="noreferrer">
@@ -52,7 +55,7 @@ function CCTV(props: CCTVProps) {
                             position: 'relative',
                             top: '2px',
                             paddingRight: 1,
-                            color: '#000000'
+                            color: '#AAAAAA'
                         }} />
                     </a>
                 </Grid>
