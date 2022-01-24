@@ -76,6 +76,7 @@ export interface VMS {
     long: number;
     rows: number;
     cols: number;
+    code: string;
     message: string;
 }
 

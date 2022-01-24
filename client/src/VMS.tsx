@@ -40,13 +40,63 @@ function VMS(props: VMSProps) {
                         vms 
                         ?
                             <Box sx={{
-                                    backgroundColor: '#000000',
-                                    color: 'yellow',
-                                    textAlign: 'center',
-                                    padding: 2,
-                                    borderRadius: 2,
-                                    width: '100%'
-                                }}>
+                                backgroundColor: '#000000',
+                                color: 'yellow',
+                                textAlign: 'center',
+                                padding: 2,
+                                borderRadius: 2,
+                                width: '100%',
+                                position: 'relative',
+                            }}>
+                                <Box sx={{
+                                    width: '8px',
+                                    height: '8px',
+                                    backgroundColor: 'yellow',
+                                    borderRadius: '50%',
+                                    opacity: 0.2,
+                                    position: 'absolute',
+                                    top: '8px',
+                                    left: '8px',
+                                }}></Box>
+                                <Box sx={{
+                                    width: '8px',
+                                    height: '8px',
+                                    backgroundColor: 'yellow',
+                                    borderRadius: '50%',
+                                    opacity: 0.2,
+                                    position: 'absolute',
+                                    bottom: '8px',
+                                    left: '8px',
+                                }}></Box>
+                                <Box sx={{
+                                    width: '8px',
+                                    height: '8px',
+                                    backgroundColor: 'yellow',
+                                    borderRadius: '50%',
+                                    opacity: 0.2,
+                                    position: 'absolute',
+                                    top: '8px',
+                                    right: '8px',
+                                }}></Box>
+                                <Box sx={{
+                                    width: '8px',
+                                    height: '8px',
+                                    backgroundColor: 'yellow',
+                                    borderRadius: '50%',
+                                    opacity: 0.2,
+                                    position: 'absolute',
+                                    bottom: '8px',
+                                    right: '8px',
+                                }}></Box>
+                                {
+                                    vms.code !== 'BLANK'
+                                    ?
+                                        <>
+                                            <img src={`/images/vms/${ vms.code }.png`} alt="VMS Screen" />
+                                            <br />
+                                        </>
+                                    : <></>
+                                }
                                 { vms.message.split('\n').map((x: string, index: number) => ( x === "" ? <></> : (index === 0 ? <span key={ index }>{ x }</span> : <span key={ index }><br />{ x }</span> ))) }
                             </Box>
                         : <></>
@@ -87,7 +137,7 @@ function VMS(props: VMSProps) {
                             position: 'relative',
                             top: '2px',
                             paddingRight: 1,
-                            color: '#000000'
+                            color: '#AAAAAA'
                         }} />
                     </a>
                 </Grid>

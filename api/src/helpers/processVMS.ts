@@ -13,6 +13,7 @@ export default function processVMS(vmsData: any[], subsections: number[]) {
               long: collection[0].longitude,
               rows: collection[0].rows,
               cols: collection[0].cols,
+              code: convertCode(collection[0].code),
               message: collection[0].message
             }
           }
@@ -55,7 +56,7 @@ export default function processVMS(vmsData: any[], subsections: number[]) {
     });
 }
 
-function convertCode(code: number): string {
+function convertCode(code: number | string): string {
     switch(code) {
       case 2:
         return 'NATIONAL_SPEED_LIMIT';
@@ -153,6 +154,20 @@ function convertCode(code: number): string {
         return 'NATIONAL_SPEED_LIMIT';
       case 62:
         return 'END_OF_RESTRICTIONS';
+      case 'SY01':
+        return 'ACCIDENT';
+      case 'SY02':
+        return 'QUEUE';
+      case 'SY03':
+        return 'CAUTION';
+      case 'SY04':
+        return 'ROADWORKS';
+      case 'SY05':
+        return 'SLIPPERY_SURFACE';
+      case 'SY06':
+        return 'ICE';
+      case 'SY07':
+        return 'WIND';
       default:
         return 'BLANK';
     }
