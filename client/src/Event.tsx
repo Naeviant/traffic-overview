@@ -4,7 +4,7 @@ import {
   Grid,
   Typography
 } from '@mui/material';
-import ConstructionIcon from '@mui/icons-material/Construction';
+import WarningIcon from '@mui/icons-material/Warning';
 
 interface EventProps {
     type: string;
@@ -19,11 +19,13 @@ function Event(props: EventProps) {
     return (
         <Paper sx={{ 
             padding: 1,
-            margin: 1
+            margin: 1,
+            backgroundColor: '#111111',
+            color: '#AAAAAA'
         }}>
             <Grid container direction="row" alignItems="center">
                 <Grid item>
-                    <ConstructionIcon sx={{
+                    <WarningIcon sx={{
                         paddingRight: 2,
                         position: 'relative',
                         top: '2px'
