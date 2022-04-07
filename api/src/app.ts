@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from 'axios';
 import fs from 'fs';
 import * as dotenv from 'dotenv';
 
-import { RoadList } from './types/RoadList';
+import { MotorwayList, ARoadList } from './types/RoadList';
 import { CCTV, Event, Junction, RoadData, Section, VMSGroup } from './types/RoadData';
 import processEvents from './helpers/processEvents';
 import processCCTV from './helpers/processCCTV';
@@ -14,31 +14,42 @@ import sort from './helpers/sort';
 dotenv.config();
 const PORT = process.env.API_PORT ?? 8080;
 const ROAD_CRON = process.env.API_ROAD_CRON ?? '* 12 * * *';
-const DATA_CRON = process.env.API_DATA_CRON ?? '* * * * *';
+const MWAY_DATA_CRON = process.env.API_MWAY_DATA_CRON ?? '*/5 * * * *';
+const AROAD_DATA_CRON = process.env.API_AROAD_DATA_CRON ?? '*/5 * * * *';
 
 // Update list of motorways - every 24 hours at 12pm
 cron.schedule(ROAD_CRON, async () => {
     const cronStart = Date.now();
     console.log('Fetching List of Roads...');
+
+    const motorwaysResp = await axios.get('https://www.trafficengland.com/api/network/getMotorwayJunctions');
+    const motorwaysData = motorwaysResp.data as MotorwayList;
+
+    const motorways = Object.keys(motorwaysData);
+
+    const aRoadResp = await axios.get('https://www.trafficengland.com/api/network/getMajorARoads');
+    const aRoadData = aRoadResp.data as ARoadList[];
+
+    const aRoads = aRoadData.map((r: ARoadList) => { return r.roadName });
+
+    const roads = motorways.concat(aRoads);
     
-    const resp = await axios.get('https://www.trafficengland.com/api/network/getMotorwayJunctions');
-    const data = resp.data as RoadList;
-
-    const roads = Object.keys(data);
-
-    fs.writeFileSync(__dirname + '/../data/roads.json', JSON.stringify(roads, null, 4));
+    const chunkSize = roads.length / 5;
+    for (let i = 0; i < roads.length; i += chunkSize) {
+        fs.writeFileSync(__dirname + `/../data/roads${(i / chunkSize) + 1}.json`, JSON.stringify(roads.slice(i, i + chunkSize), null, 4));
+    }
     
     const cronEnd = Date.now();
     const cronTime = cronEnd - cronStart;
-    console.log(`Finished Fetching List of Roads (${cronTime / 1000} Seconds)`)
+    console.log(`Finished Fetching List of Roads (${cronTime / 1000} Seconds)`);
 });
 
-// Update road data - every minute
-cron.schedule(DATA_CRON, async () => {
+// Update motorway data - every five minutes
+cron.schedule(MWAY_DATA_CRON, async () => {
     const cronStart = Date.now();
     console.log('Fetching Road Data...');
 
-    const roads = JSON.parse(fs.readFileSync(__dirname + '/../data/roads.json', 'utf8'));
+    const roads = JSON.parse(fs.readFileSync(__dirname + '/../data/motorways.json', 'utf8'));
 
     const sectionsReq: Promise<AxiosResponse>[] = roads.map((x: string) => { return axios.get(`https://www.trafficengland.com/api/network/getJunctionSections?roadName=${ x }`); });
     const sectionsRes: AxiosResponse[] = await axios.all(sectionsReq);
@@ -164,9 +175,13 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.get('/roads', async (req: Request, res: Response) => {
-    const roads = fs.readFileSync(__dirname + '/../data/roads.json', 'utf8');
+    const roads1 = JSON.parse(fs.readFileSync(__dirname + '/../data/roads1.json', 'utf8'));
+    const roads2 = JSON.parse(fs.readFileSync(__dirname + '/../data/roads2.json', 'utf8'));
+    const roads3 = JSON.parse(fs.readFileSync(__dirname + '/../data/roads3.json', 'utf8'));
+    const roads4 = JSON.parse(fs.readFileSync(__dirname + '/../data/roads4.json', 'utf8'));
+    const roads5 = JSON.parse(fs.readFileSync(__dirname + '/../data/roads5.json', 'utf8'));
 
-    res.send({ status: 200, data: JSON.parse(roads) });
+    res.send({ status: 200, data: roads1.concat(roads2, roads3, roads4, roads5) });
 });
 
 app.get('/road/:road', async (req: Request, res: Response) => {
