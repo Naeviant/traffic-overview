@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cron from 'node-cron';
 import axios, { AxiosResponse } from 'axios';
 import fs from 'fs';
@@ -151,6 +151,13 @@ cron.schedule(DATA_CRON, async () => {
 });
 
 const app = express();
+
+app.all('*', (req: Request, res: Response, next: NextFunction) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+    next();
+});
 
 app.get('/', (req: Request, res: Response) => {
     res.send({ status: 200, data: [] });
