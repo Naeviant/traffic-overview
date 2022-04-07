@@ -104,7 +104,7 @@ function App() {
                     <DirectionHeader direction={ data.secondaryDirection } />
                   </Grid>
                   {
-                    data.primaryDirectionSections.map((section: any, index: number) => (
+                    [...data.primaryDirectionSections].reverse().map((section: any, index: number) => (
                       section.interface === "JUNCTION"
                       ?
                         <>
@@ -115,7 +115,7 @@ function App() {
                             <JunctionHeader text={ section.payload.name } arrows />
                           </Grid>
                           <Grid item xs={5}>
-                            <JunctionHeader text={ data.secondaryDirectionSections[index].payload.destination } />
+                            <JunctionHeader text={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.destination } />
                           </Grid>
                         </>
                       : 
@@ -127,7 +127,7 @@ function App() {
                           }}>
                             <AverageSpeed speed={ Math.round(section.payload.speed)} />
                             {
-                              section.payload.data.map((info: any, index: number) => (
+                              [...section.payload.data].reverse().map((info: any, index: number) => (
                                 info.interface === "CCTV"
                                 ? 
                                   <CCTV lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
@@ -147,9 +147,9 @@ function App() {
                             flexDirection: 'column',
                             justifyContent: 'center'
                           }}>
-                            <AverageSpeed speed={ Math.round(data.secondaryDirectionSections[index].payload.speed)} />
+                            <AverageSpeed speed={ Math.round(data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.speed)} />
                             {
-                              data.secondaryDirectionSections[index].payload.data.map((info: any, index: number) => (
+                              [...data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.data].reverse().map((info: any, index: number) => (
                                 info.interface === "CCTV"
                                 ?
                                   <CCTV lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />

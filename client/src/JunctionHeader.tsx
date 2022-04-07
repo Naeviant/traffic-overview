@@ -27,13 +27,13 @@ function JunctionHeader(props: JunctionHeaderProps) {
                     arrows
                         ?
                             <>
-                                <ArrowDownwardIcon sx={{
+                                <ArrowUpwardIcon sx={{
                                     position: 'relative',
                                     top: '4px',
                                     right: '24px',
                                 }} />
                                 { text }
-                                <ArrowUpwardIcon sx={{
+                                <ArrowDownwardIcon sx={{
                                     position: 'relative',
                                     top: '4px',
                                     left: '24px',
