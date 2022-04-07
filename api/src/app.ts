@@ -13,15 +13,8 @@ import sort from './helpers/sort';
 
 dotenv.config();
 const PORT = process.env.API_PORT ?? 8080;
-const ROAD_CRON = process.env.API_ROAD_CRON ?? '* 12 * * *';
-const MWAY_DATA_CRON = process.env.API_MWAY_DATA_CRON ?? '*/5 * * * *';
-const AROAD_DATA_CRON = process.env.API_AROAD_DATA_CRON ?? '*/5 * * * *';
 
-// Update list of motorways - every 24 hours at 12pm
-cron.schedule(ROAD_CRON, async () => {
-    const cronStart = Date.now();
-    console.log('Fetching List of Roads...');
-
+async function fetchRoadList() {
     const motorwaysResp = await axios.get('https://www.trafficengland.com/api/network/getMotorwayJunctions');
     const motorwaysData = motorwaysResp.data as MotorwayList;
 
@@ -38,18 +31,10 @@ cron.schedule(ROAD_CRON, async () => {
     for (let i = 0; i < roads.length; i += chunkSize) {
         fs.writeFileSync(__dirname + `/../data/roads${(i / chunkSize) + 1}.json`, JSON.stringify(roads.slice(i, i + chunkSize), null, 4));
     }
-    
-    const cronEnd = Date.now();
-    const cronTime = cronEnd - cronStart;
-    console.log(`Finished Fetching List of Roads (${cronTime / 1000} Seconds)`);
-});
+}
 
-// Update motorway data - every five minutes
-cron.schedule(MWAY_DATA_CRON, async () => {
-    const cronStart = Date.now();
-    console.log('Fetching Road Data...');
-
-    const roads = JSON.parse(fs.readFileSync(__dirname + '/../data/motorways.json', 'utf8'));
+async function fetchRoadData(roads: string[]) {
+    if (process.env.API_STOP_FETCH && process.env.API_STOP_FETCH != 'FALSE') return;
 
     const sectionsReq: Promise<AxiosResponse>[] = roads.map((x: string) => { return axios.get(`https://www.trafficengland.com/api/network/getJunctionSections?roadName=${ x }`); });
     const sectionsRes: AxiosResponse[] = await axios.all(sectionsReq);
@@ -69,6 +54,8 @@ cron.schedule(MWAY_DATA_CRON, async () => {
     const dataRes: any[] = (await axios.all(dataReq)).map((x: AxiosResponse) => x.data);
 
     for (const road of roads) {
+        if (!sections[road]) continue;
+
         const data: RoadData = {
             road: road,
             primaryDirection: (Object.values(sections[road] as any)[0] as any).primaryDirection,
@@ -155,10 +142,83 @@ cron.schedule(MWAY_DATA_CRON, async () => {
 
         fs.writeFileSync(__dirname + `/../data/roads/${ road }.json`, JSON.stringify(data, null, 4));
     }
+}
+
+// Update list of motorways - every 24 hours at 12pm
+cron.schedule('* 12 * * *', async () => {
+    const cronStart = Date.now();
+    console.log('Fetching List of Roads...');
+
+    await fetchRoadList();
+    
+    const cronEnd = Date.now();
+    const cronTime = cronEnd - cronStart;
+    console.log(`Finished Fetching List of Roads (${cronTime / 1000} Seconds)`);
+});
+
+// Update batch 1 of road data - every five minutes
+cron.schedule('0,5,10,15,20,25,30,35,40,45,50,55 * * * *', async () => {
+    const cronStart = Date.now();
+    console.log('Fetching Batch 1 of Road Data...');
+
+    const roads = JSON.parse(fs.readFileSync(__dirname + '/../data/roads1.json', 'utf8'));
+    await fetchRoadData(roads);
 
     const cronEnd = Date.now();
     const cronTime = cronEnd - cronStart;
-    console.log(`Finished Fetching Road Data (${cronTime / 1000} Seconds)`);
+    console.log(`Finished Fetching Batch 1 of Road Data (${cronTime / 1000} Seconds)`);
+});
+
+// Update batch 2 of road data - every five minutes
+cron.schedule('1,6,11,16,21,26,31,36,41,46,51,56 * * * *', async () => {
+    const cronStart = Date.now();
+    console.log('Fetching Batch 2 of Road Data...');
+
+    const roads = JSON.parse(fs.readFileSync(__dirname + '/../data/roads2.json', 'utf8'));
+    await fetchRoadData(roads);
+
+    const cronEnd = Date.now();
+    const cronTime = cronEnd - cronStart;
+    console.log(`Finished Fetching Batch 2 of Road Data (${cronTime / 1000} Seconds)`);
+});
+
+// Update batch 3 of road data - every five minutes
+cron.schedule('2,7,12,17,22,27,32,37,42,47,52,57 * * * *', async () => {
+    const cronStart = Date.now();
+    console.log('Fetching Batch 3 of Road Data...');
+
+    const roads = JSON.parse(fs.readFileSync(__dirname + '/../data/roads3.json', 'utf8'));
+    await fetchRoadData(roads);
+
+    const cronEnd = Date.now();
+    const cronTime = cronEnd - cronStart;
+    console.log(`Finished Fetching Batch 3 of Road Data (${cronTime / 1000} Seconds)`);
+});
+
+// Update batch 4 of road data - every five minutes
+cron.schedule('3,8,13,18,23,28,33,38,43,48,53,58 * * * *', async () => {
+    const cronStart = Date.now();
+    console.log('Fetching Batch 4 of Road Data...');
+
+    const roads = JSON.parse(fs.readFileSync(__dirname + '/../data/roads4.json', 'utf8'));
+    await fetchRoadData(roads);
+
+    const cronEnd = Date.now();
+    const cronTime = cronEnd - cronStart;
+    console.log(`Finished Fetching Batch 4 of Road Data (${cronTime / 1000} Seconds)`);
+});
+
+// Update batch 5 of road data - every five minutes
+cron.schedule('4,9,14,19,24,29,34,39,44,49,54,59 * * * *', async () => {
+    const cronStart = Date.now();
+    console.log('Fetching Batch 5 of Road Data...');
+
+    const roads = JSON.parse(fs.readFileSync(__dirname + '/../data/roads5.json', 'utf8'));
+    await fetchRoadData(roads);
+
+    const cronEnd = Date.now();
+    const cronTime = cronEnd - cronStart;
+    console.log(`Finished Fetching Batch 5 of Road Data (${cronTime / 1000} Seconds)`);
 });
 
 const app = express();
