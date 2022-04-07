@@ -2,7 +2,6 @@
   "name": "traffic-overview",
   "version": "1.0.0",
   "description": "The API for an unofficial rewrite of National Highway's Traffic England service.",
-  "proxy": "http://localhost:8080",
   "dependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
