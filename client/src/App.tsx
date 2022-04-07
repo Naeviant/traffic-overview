@@ -19,9 +19,15 @@ function App() {
   const [road, setRoad] = useState<(string)>("");
   const [roads, setRoads] = useState<string[]>([]);
   const [data, setData] = useState<any>(null);
+  const [colour, setColour] = useState<string>('blue');
 
   const roadChange = (e: any) => {
     setRoad(e.target.value);
+    if (e.target.value.slice(0, 1) === 'M' || e.target.value.slice(e.target.value.length - 3) === '(M)') {
+      setColour('blue');
+    } else {
+      setColour('green');
+    }
   };
 
   const unsetRoad = (e: any) => {
@@ -95,13 +101,13 @@ function App() {
               ?
                 <Grid container spacing={1}>
                   <Grid item xs={5}>
-                    <DirectionHeader direction={ data.primaryDirection } />
+                    <DirectionHeader direction={ data.primaryDirection } colour={colour} />
                   </Grid>
                   <Grid item xs={2}>
-                    <RoadHeader road={ data.road } ringRoad={ data.circularRoad } />
+                    <RoadHeader road={ data.road } ringRoad={ data.circularRoad } colour={colour} />
                   </Grid>
                   <Grid item xs={5}>
-                    <DirectionHeader direction={ data.secondaryDirection } />
+                    <DirectionHeader direction={ data.secondaryDirection } colour={colour} />
                   </Grid>
                   {
                     [...data.primaryDirectionSections].reverse().map((section: any, index: number) => (
@@ -109,13 +115,13 @@ function App() {
                       ?
                         <>
                           <Grid item xs={5}>
-                            <JunctionHeader text={ section.payload.destination } />
+                            <JunctionHeader text={ section.payload.destination } colour={colour} />
                           </Grid>
                           <Grid item xs={2}>
-                            <JunctionHeader text={ section.payload.name } arrows />
+                            <JunctionHeader text={ section.payload.name } arrows colour={colour} />
                           </Grid>
                           <Grid item xs={5}>
-                            <JunctionHeader text={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.destination } />
+                            <JunctionHeader text={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.destination } colour={colour} />
                           </Grid>
                         </>
                       : 

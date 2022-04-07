@@ -9,14 +9,15 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 interface JunctionHeaderProps {
     text: string;
     arrows?: boolean;
+    colour: string;
 }
 
 function JunctionHeader(props: JunctionHeaderProps) {
-    const { text, arrows } = props;
+    const { text, arrows, colour } = props;
 
     return (
         <Paper sx={{ 
-            backgroundColor: '#01579b', 
+            backgroundColor: colour === 'blue' ? '#01579b' : '#1b5e20', 
             color: '#FFFFFF',
             padding: 1,
             margin: 1
