@@ -30,12 +30,12 @@ function App() {
 
   useEffect(() => {
     if (roads.length === 0) {
-      axios.get('/roads').then((resp: AxiosResponse) => {
+      axios.get(`${process.env.REACT_APP_API_BASE}roads`).then((resp: AxiosResponse) => {
         setRoads(resp.data.data);
       });
     } 
     if ((!data && road) || (data && road !== data.road)) {
-      axios.get(`/road/${ road }`).then((resp: AxiosResponse) => {
+      axios.get(`${process.env.REACT_APP_API_BASE}road/${ road }`).then((resp: AxiosResponse) => {
         setData(resp.data.data);
       });
     }
