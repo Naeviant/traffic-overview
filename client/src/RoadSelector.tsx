@@ -1,12 +1,11 @@
 import React from 'react';
 import {
+    Autocomplete,
     Box,
-    FormControl, 
-    InputLabel, 
-    MenuItem,
-    Select
+    Paper,
+    TextField
 } from '@mui/material';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ClearIcon from '@mui/icons-material/Clear';
 
 interface RoadSelectorProps {
     width: string;
@@ -25,46 +24,27 @@ function RoadSelector(props: RoadSelectorProps) {
             borderRadius: '8px',
             width: width
         }}>
-            <FormControl sx={{
-                width: '100%'
-            }}>
-                <InputLabel id="road-input-label" sx={{
-                    color: '#AAAAAA !important',
-                }}>
-                    Select Road
-                </InputLabel>
-                <Select
-                    labelId="road-input-label"
-                    id="road-input"
-                    value={ road }
-                    label="Road"
-                    onChange={ setRoad }
-                    sx={{
-                        width: '100%',
-                        color: '#AAAAAA'
-                    }}
-                >
-                    {
-                        roads.map((road, i) => (
-                            <MenuItem
-                                key={ road }
-                                value={ road }
-                                sx={{
-                                    backgroundColor: '#111111 !important',
-                                    color: '#AAAAAA',
-                                    "&:hover": {
-                                        backgroundColor: '#333333 !important',
-                                    },
-                                    marginTop: i === 0 ? '-8px' : 0,
-                                    marginBottom: i === roads.length - 1 ? '-8px' : 0,
-                                }}
-                            >
-                                { road }
-                            </MenuItem>
-                        ))
-                    }
-                </Select>
-            </FormControl>
+            <Autocomplete
+                disablePortal
+                freeSolo
+                options={roads}
+                PaperComponent={(props) => <Paper {...props} sx={{ backgroundColor: '#111111' }} />}
+                ListboxProps={{ style: { maxHeight: '200px' }}}
+                value={road}
+                onChange={(e, value) => { if (value) setRoad(value) }}
+                renderOption={(props, option) => {
+                    return (
+                        <span {...props} style={{ 
+                            backgroundColor: '#111111',
+                            color: '#AAAAAA'
+                        }}>
+                            {option}
+                        </span>
+                    );
+                }}
+                renderInput={(props) => <TextField className='road-selector' {...props} label="Road" InputLabelProps={{ sx: { color: '#AAAAAA !important' } }} />}
+                clearIcon={<ClearIcon fontSize="small" sx={{ color: '#AAAAAA !important' }} />}
+            />
         </Box>
     );
 }

@@ -10,6 +10,7 @@ import DirectionHeader from './DirectionHeader';
 import RoadHeader from './RoadHeader';
 import JunctionHeader from './JunctionHeader';
 import AverageSpeed from './AverageSpeed';
+import Distance from './Distance';
 import CCTV from './CCTV';
 import Event from './Event';
 import VMS from './VMS';
@@ -22,9 +23,9 @@ function App() {
   const [data, setData] = useState<any>(null);
   const [colour, setColour] = useState<string>('blue');
 
-  const roadChange = (e: any) => {
-    setRoad(e.target.value);
-    if (e.target.value.slice(0, 1) === 'M' || e.target.value.slice(e.target.value.length - 3) === '(M)') {
+  const roadChange = (newRoad: string) => {
+    setRoad(newRoad);
+    if (newRoad.slice(0, 1) === 'M' || newRoad.slice(e.target.value.length - 3) === '(M)') {
       setColour('blue');
     } else {
       setColour('green');
@@ -41,7 +42,7 @@ function App() {
         setRoads(resp.data.data);
       });
     } 
-    if ((!data && road) || (data && road !== data.road)) {
+    if ((!data && road) || (data && road && road !== data.road)) {
       axios.get(`${process.env.REACT_APP_API_BASE}road/${ road }`, { validateStatus: (status: number) => { return (status >= 200 && status < 300) || status === 404 }}).then((resp: AxiosResponse) => {
         setData(resp.data.data);
       });
@@ -114,7 +115,7 @@ function App() {
                     [...data.primaryDirectionSections].reverse().map((section: any, index: number) => (
                       section.interface === "JUNCTION"
                       ?
-                        <>
+                        <React.Fragment key={index}>
                           <Grid item xs={5}>
                             <JunctionHeader text={ section.payload.destination } colour={colour} />
                           </Grid>
@@ -124,26 +125,27 @@ function App() {
                           <Grid item xs={5}>
                             <JunctionHeader text={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.destination } colour={colour} />
                           </Grid>
-                        </>
+                        </React.Fragment>
                       : 
-                        <>
+                      <React.Fragment key={index}>
                           <Grid item xs={5} sx={{
                             display: 'flex',
                             flexDirection: 'column',
                             justifyContent: 'center'
                           }}>
                             <AverageSpeed speed={ Math.round(section.payload.speed)} />
+                            <Distance distance={ section.payload.length} />
                             {
                               [...section.payload.data].reverse().map((info: any, index: number) => (
                                 info.interface === "CCTV"
                                 ? 
-                                  <CCTV lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
+                                  <CCTV key={ info.payload.id } lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
                                 : info.interface === "VMS"
                                   ?
-                                    <VMS lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
+                                    <VMS key={ info.payload.address } lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
                                   : info.interface === "EVENT"
                                     ?
-                                        <Event type={ info.payload.type } reason={ info.payload.reason } severity={ info.payload.severity } lanes={ info.payload.lanes } />
+                                        <Event key={ info.payload.id } type={ info.payload.type } reason={ info.payload.reason } severity={ info.payload.severity } lanes={ info.payload.lanes } />
                                     : <></>
                               ))
                             }
@@ -155,22 +157,23 @@ function App() {
                             justifyContent: 'center'
                           }}>
                             <AverageSpeed speed={ Math.round(data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.speed)} />
+                            <Distance distance={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.length} />
                             {
                               [...data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.data].reverse().map((info: any, index: number) => (
                                 info.interface === "CCTV"
                                 ?
-                                  <CCTV lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
+                                  <CCTV key={ info.payload.id } lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
                                 : info.interface === "VMS"
                                   ?
-                                    <VMS lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
+                                    <VMS key={ info.payload.address } lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
                                   : info.interface === "EVENT"
                                     ?
-                                      <Event type={ info.payload.type } reason={ info.payload.reason } severity={ info.payload.severity } lanes={ info.payload.lanes } />
+                                      <Event key={ info.payload.id } type={ info.payload.type } reason={ info.payload.reason } severity={ info.payload.severity } lanes={ info.payload.lanes } />
                                     : <></>
                               ))
                             }
                           </Grid>
-                        </>
+                        </React.Fragment>
                     ))
                   }
                 </Grid>
