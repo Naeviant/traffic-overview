@@ -10,6 +10,7 @@ import DirectionHeader from './DirectionHeader';
 import RoadHeader from './RoadHeader';
 import JunctionHeader from './JunctionHeader';
 import AverageSpeed from './AverageSpeed';
+import Distance from './Distance';
 import CCTV from './CCTV';
 import Event from './Event';
 import VMS from './VMS';
@@ -126,6 +127,7 @@ function App() {
                             justifyContent: 'center'
                           }}>
                             <AverageSpeed speed={ Math.round(section.payload.speed)} />
+                            <Distance distance={ section.payload.length} />
                             {
                               [...section.payload.data].reverse().map((info: any, index: number) => (
                                 info.interface === "CCTV"
@@ -148,6 +150,7 @@ function App() {
                             justifyContent: 'center'
                           }}>
                             <AverageSpeed speed={ Math.round(data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.speed)} />
+                            <Distance distance={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.length} />
                             {
                               [...data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.data].reverse().map((info: any, index: number) => (
                                 info.interface === "CCTV"
