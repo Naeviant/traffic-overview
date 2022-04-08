@@ -107,7 +107,7 @@ function App() {
                     [...data.primaryDirectionSections].reverse().map((section: any, index: number) => (
                       section.interface === "JUNCTION"
                       ?
-                        <>
+                        <React.Fragment key={index}>
                           <Grid item xs={5}>
                             <JunctionHeader text={ section.payload.destination } />
                           </Grid>
@@ -117,9 +117,9 @@ function App() {
                           <Grid item xs={5}>
                             <JunctionHeader text={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.destination } />
                           </Grid>
-                        </>
+                        </React.Fragment>
                       : 
-                        <>
+                      <React.Fragment key={index}>
                           <Grid item xs={5} sx={{
                             display: 'flex',
                             flexDirection: 'column',
@@ -130,13 +130,13 @@ function App() {
                               [...section.payload.data].reverse().map((info: any, index: number) => (
                                 info.interface === "CCTV"
                                 ? 
-                                  <CCTV lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
+                                  <CCTV key={ info.payload.id } lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
                                 : info.interface === "VMS"
                                   ?
-                                    <VMS lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
+                                    <VMS key={ info.payload.address } lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
                                   : info.interface === "EVENT"
                                     ?
-                                        <Event type={ info.payload.type } reason={ info.payload.reason } severity={ info.payload.severity } lanes={ info.payload.lanes } />
+                                        <Event key={ info.payload.id } type={ info.payload.type } reason={ info.payload.reason } severity={ info.payload.severity } lanes={ info.payload.lanes } />
                                     : <></>
                               ))
                             }
@@ -152,18 +152,18 @@ function App() {
                               [...data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.data].reverse().map((info: any, index: number) => (
                                 info.interface === "CCTV"
                                 ?
-                                  <CCTV lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
+                                  <CCTV key={ info.payload.id } lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
                                 : info.interface === "VMS"
                                   ?
-                                    <VMS lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
+                                    <VMS key={ info.payload.address } lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
                                   : info.interface === "EVENT"
                                     ?
-                                      <Event type={ info.payload.type } reason={ info.payload.reason } severity={ info.payload.severity } lanes={ info.payload.lanes } />
+                                      <Event key={ info.payload.id } type={ info.payload.type } reason={ info.payload.reason } severity={ info.payload.severity } lanes={ info.payload.lanes } />
                                     : <></>
                               ))
                             }
                           </Grid>
-                        </>
+                        </React.Fragment>
                     ))
                   }
                 </Grid>

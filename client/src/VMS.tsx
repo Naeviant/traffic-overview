@@ -97,7 +97,7 @@ function VMS(props: VMSProps) {
                                         </>
                                     : <></>
                                 }
-                                { vms.message.split('\n').map((x: string, index: number) => ( x === "" ? <></> : (index === 0 ? <span key={ index }>{ x }</span> : <span key={ index }><br />{ x }</span> ))) }
+                                { vms.message.split('\n').map((x: string, index: number) => ( x === "" ? <React.Fragment key={index}></React.Fragment> : (index === 0 ? <span key={ index }>{ x }</span> : <span key={ index }><br />{ x }</span> ))) }
                             </Box>
                         : <></>
                     }
@@ -116,7 +116,7 @@ function VMS(props: VMSProps) {
                     }}>
                         {
                             sig.map((sig: any, index: number) => (
-                                <div style={{
+                                <div key={index} style={{
                                     margin: '0 2px',
                                     padding: '4px',
                                     height: '30px',
