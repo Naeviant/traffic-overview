@@ -20,8 +20,8 @@ function App() {
   const [roads, setRoads] = useState<string[]>([]);
   const [data, setData] = useState<any>(null);
 
-  const roadChange = (e: any) => {
-    setRoad(e.target.value);
+  const roadChange = (newRoad: string) => {
+    setRoad(newRoad);
   };
 
   const unsetRoad = (e: any) => {
@@ -34,7 +34,7 @@ function App() {
         setRoads(resp.data.data);
       });
     } 
-    if ((!data && road) || (data && road !== data.road)) {
+    if ((!data && road) || (data && road && road !== data.road)) {
       axios.get(`${process.env.REACT_APP_API_BASE}road/${ road }`).then((resp: AxiosResponse) => {
         setData(resp.data.data);
       });
