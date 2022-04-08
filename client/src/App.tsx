@@ -14,6 +14,7 @@ import CCTV from './CCTV';
 import Event from './Event';
 import VMS from './VMS';
 import RoadSelector from './RoadSelector';
+import NotFound from './NotFound';
 
 function App() {
   const [road, setRoad] = useState<(string)>("");
@@ -41,7 +42,7 @@ function App() {
       });
     } 
     if ((!data && road) || (data && road !== data.road)) {
-      axios.get(`${process.env.REACT_APP_API_BASE}road/${ road }`).then((resp: AxiosResponse) => {
+      axios.get(`${process.env.REACT_APP_API_BASE}road/${ road }`, { validateStatus: (status: number) => { return (status >= 200 && status < 300) || status === 404 }}).then((resp: AxiosResponse) => {
         setData(resp.data.data);
       });
     }
@@ -97,7 +98,7 @@ function App() {
               <RoadSelector width="calc(100% - 112px)" road={ road } roads={ roads } setRoad={ roadChange } />
             </Box>
             {
-              data 
+              data !== null && (!Array.isArray(data) || data.length > 1)
               ?
                 <Grid container spacing={1}>
                   <Grid item xs={5}>
@@ -173,7 +174,8 @@ function App() {
                     ))
                   }
                 </Grid>
-              : <></>
+              : 
+                <NotFound />
             }
           </Box>
 
