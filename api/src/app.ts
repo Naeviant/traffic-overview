@@ -250,7 +250,7 @@ app.get('/road/:road', async (req: Request, res: Response) => {
 
         res.send({ status: 200, data: JSON.parse(road) });
     } catch(e) {
-        res.send({ status: 404, data: [] });
+        res.status(404).send({ status: 404, data: [] });
     }
 });
 
