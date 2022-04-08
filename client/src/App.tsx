@@ -15,14 +15,21 @@ import CCTV from './CCTV';
 import Event from './Event';
 import VMS from './VMS';
 import RoadSelector from './RoadSelector';
+import NotFound from './NotFound';
 
 function App() {
   const [road, setRoad] = useState<(string)>("");
   const [roads, setRoads] = useState<string[]>([]);
   const [data, setData] = useState<any>(null);
+  const [colour, setColour] = useState<string>('blue');
 
   const roadChange = (newRoad: string) => {
     setRoad(newRoad);
+    if (newRoad.slice(0, 1) === 'M' || newRoad.slice(e.target.value.length - 3) === '(M)') {
+      setColour('blue');
+    } else {
+      setColour('green');
+    }
   };
 
   const unsetRoad = (e: any) => {
@@ -36,7 +43,7 @@ function App() {
       });
     } 
     if ((!data && road) || (data && road && road !== data.road)) {
-      axios.get(`${process.env.REACT_APP_API_BASE}road/${ road }`).then((resp: AxiosResponse) => {
+      axios.get(`${process.env.REACT_APP_API_BASE}road/${ road }`, { validateStatus: (status: number) => { return (status >= 200 && status < 300) || status === 404 }}).then((resp: AxiosResponse) => {
         setData(resp.data.data);
       });
     }
@@ -92,17 +99,17 @@ function App() {
               <RoadSelector width="calc(100% - 112px)" road={ road } roads={ roads } setRoad={ roadChange } />
             </Box>
             {
-              data 
+              data !== null && (!Array.isArray(data) || data.length > 1)
               ?
                 <Grid container spacing={1}>
                   <Grid item xs={5}>
-                    <DirectionHeader direction={ data.primaryDirection } />
+                    <DirectionHeader direction={ data.primaryDirection } colour={colour} />
                   </Grid>
                   <Grid item xs={2}>
-                    <RoadHeader road={ data.road } ringRoad={ data.circularRoad } />
+                    <RoadHeader road={ data.road } ringRoad={ data.circularRoad } colour={colour} />
                   </Grid>
                   <Grid item xs={5}>
-                    <DirectionHeader direction={ data.secondaryDirection } />
+                    <DirectionHeader direction={ data.secondaryDirection } colour={colour} />
                   </Grid>
                   {
                     [...data.primaryDirectionSections].reverse().map((section: any, index: number) => (
@@ -110,13 +117,13 @@ function App() {
                       ?
                         <React.Fragment key={index}>
                           <Grid item xs={5}>
-                            <JunctionHeader text={ section.payload.destination } />
+                            <JunctionHeader text={ section.payload.destination } colour={colour} />
                           </Grid>
                           <Grid item xs={2}>
-                            <JunctionHeader text={ section.payload.name } arrows />
+                            <JunctionHeader text={ section.payload.name } arrows colour={colour} />
                           </Grid>
                           <Grid item xs={5}>
-                            <JunctionHeader text={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.destination } />
+                            <JunctionHeader text={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.destination } colour={colour} />
                           </Grid>
                         </React.Fragment>
                       : 
@@ -170,7 +177,8 @@ function App() {
                     ))
                   }
                 </Grid>
-              : <></>
+              : 
+                <NotFound />
             }
           </Box>
 

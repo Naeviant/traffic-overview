@@ -7,14 +7,15 @@ import {
 interface RoadHeaderProps {
     road: string;
     ringRoad: boolean;
+    colour: string;
 }
 
 function RoadHeader(props: RoadHeaderProps) {
-    const { road, ringRoad } = props;
+    const { road, ringRoad, colour } = props;
 
     return (
         <Paper sx={{ 
-            backgroundColor: '#01579b', 
+            backgroundColor: colour === 'blue' ? '#01579b' : '#1b5e20', 
             color: '#FFFFFF',
             padding: 2,
             margin: 1,

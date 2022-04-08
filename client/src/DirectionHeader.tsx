@@ -6,14 +6,15 @@ import {
 
 interface DirectionHeaderProps {
     direction: string;
+    colour: string;
 }
 
 function DirectionHeader(props: DirectionHeaderProps) {
-    const { direction } = props;
+    const { direction, colour } = props;
 
     return (
         <Paper sx={{ 
-            backgroundColor: '#01579b', 
+            backgroundColor: colour === 'blue' ? '#01579b' : '#1b5e20', 
             color: '#FFFFFF',
             padding: 2,
             margin: 1,
