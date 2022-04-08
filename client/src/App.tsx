@@ -25,7 +25,7 @@ function App() {
 
   const roadChange = (newRoad: string) => {
     setRoad(newRoad);
-    if (newRoad.slice(0, 1) === 'M' || newRoad.slice(e.target.value.length - 3) === '(M)') {
+    if (newRoad.slice(0, 1) === 'M' || newRoad.slice(newRoad.length - 3) === '(M)') {
       setColour('blue');
     } else {
       setColour('green');
