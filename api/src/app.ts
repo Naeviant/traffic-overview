@@ -34,7 +34,22 @@ async function fetchRoadList() {
 }
 
 async function fetchRoadData(roads: string[]) {
+    const timestamps = fs.readdirSync(__dirname + `/../data/roads/historical`);
+    for (const timestamp of timestamps) {
+        if (parseInt(timestamp) < Date.now() - 86400000) {
+            fs.rmSync(__dirname + `/../data/roads/historical/${timestamp}`, { recursive: true, force: true });
+        }
+    }
+
     if (process.env.API_STOP_FETCH && process.env.API_STOP_FETCH != 'FALSE') return;
+
+    const fetchTime = (Date.now() - 300000).toString();
+    fs.mkdirSync(__dirname + `/../data/roads/historical/${ fetchTime }`);
+    for (const road of roads) {
+        if (fs.existsSync(__dirname + `/../data/roads/${ road }.json`)) {
+            fs.copyFileSync(__dirname + `/../data/roads/${ road }.json`, __dirname + `/../data/roads/historical/${ fetchTime }/${ road }.json`);
+        }
+    }
 
     const sectionsReq: Promise<AxiosResponse>[] = roads.map((x: string) => { return axios.get(`https://www.trafficengland.com/api/network/getJunctionSections?roadName=${ x }`); });
     const sectionsRes: AxiosResponse[] = await axios.all(sectionsReq);
