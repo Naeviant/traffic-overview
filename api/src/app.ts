@@ -260,6 +260,26 @@ app.get('/roads', async (req: Request, res: Response) => {
     res.send({ status: 200, data: roads1.concat(roads2, roads3, roads4, roads5) });
 });
 
+app.get('/timestamps/:road', async (req: Request, res: Response) => {
+    try {
+        const road = JSON.parse(fs.readFileSync(__dirname + `/../data/roads/${ req.params.road }.json`, 'utf8'));
+
+        const currentTimestamp = road.dataTimestamp;
+        const previousTimestamps = [];
+
+        const timestamps = fs.readdirSync(__dirname + `/../data/roads/historical`);
+        for (const timestamp of timestamps) {
+            if (fs.existsSync(__dirname + `/../data/roads/historical/${ timestamp }/${ req.params.road }.json`)) {
+                previousTimestamps.push(timestamp);
+            }
+        }
+
+        res.send({ status: 200, data: { currentTimestamp, previousTimestamps } });
+    } catch(e) {
+        res.status(404).send({ status: 404, data: [] });
+    }
+});
+
 app.get('/road/:road', async (req: Request, res: Response) => {
     try {
         const road = fs.readFileSync(__dirname + `/../data/roads/${ req.params.road }.json`, 'utf8');
