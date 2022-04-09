@@ -58,6 +58,7 @@ async function fetchRoadData(roads: string[]) {
 
         const data: RoadData = {
             road: road,
+            dataTimestamp: Date.now(),
             primaryDirection: (Object.values(sections[road] as any)[0] as any).primaryDirection,
             secondaryDirection: (Object.values(sections[road] as any)[0] as any).secondaryDirection,
             primaryDirectionSections: [],
