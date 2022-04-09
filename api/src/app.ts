@@ -36,6 +36,21 @@ async function fetchRoadList() {
 async function fetchRoadData(roads: string[]) {
     if (process.env.API_STOP_FETCH && process.env.API_STOP_FETCH != 'FALSE') return;
 
+    const timestamps = fs.readdirSync(__dirname + `/../data/roads/historical`);
+    for (const timestamp of timestamps) {
+        if (parseInt(timestamp) < Date.now() - 86400000) {
+            fs.rmSync(__dirname + `/../data/roads/historical/${timestamp}`, { recursive: true, force: true });
+        }
+    }
+
+    const fetchTime = (Math.floor((Date.now() - 300000) / 60000) * 60000).toString();
+    fs.mkdirSync(__dirname + `/../data/roads/historical/${ fetchTime }`);
+    for (const road of roads) {
+        if (fs.existsSync(__dirname + `/../data/roads/${ road }.json`)) {
+            fs.copyFileSync(__dirname + `/../data/roads/${ road }.json`, __dirname + `/../data/roads/historical/${ fetchTime }/${ road }.json`);
+        }
+    }
+
     const sectionsReq: Promise<AxiosResponse>[] = roads.map((x: string) => { return axios.get(`https://www.trafficengland.com/api/network/getJunctionSections?roadName=${ x }`); });
     const sectionsRes: AxiosResponse[] = await axios.all(sectionsReq);
     const sections = Object.fromEntries(roads.map((x: string) => [x, sectionsRes[roads.indexOf(x)].data]));
@@ -58,6 +73,7 @@ async function fetchRoadData(roads: string[]) {
 
         const data: RoadData = {
             road: road,
+            dataTimestamp: Math.floor(Date.now() / 60000) * 60000,
             primaryDirection: (Object.values(sections[road] as any)[0] as any).primaryDirection,
             secondaryDirection: (Object.values(sections[road] as any)[0] as any).secondaryDirection,
             primaryDirectionSections: [],
@@ -244,9 +260,39 @@ app.get('/roads', async (req: Request, res: Response) => {
     res.send({ status: 200, data: roads1.concat(roads2, roads3, roads4, roads5) });
 });
 
+app.get('/timestamps/:road', async (req: Request, res: Response) => {
+    try {
+        const road = JSON.parse(fs.readFileSync(__dirname + `/../data/roads/${ req.params.road }.json`, 'utf8'));
+
+        const currentTimestamp = road.dataTimestamp;
+        const previousTimestamps = [];
+
+        const timestamps = fs.readdirSync(__dirname + `/../data/roads/historical`);
+        for (const timestamp of timestamps) {
+            if (fs.existsSync(__dirname + `/../data/roads/historical/${ timestamp }/${ req.params.road }.json`)) {
+                previousTimestamps.push(timestamp);
+            }
+        }
+
+        res.send({ status: 200, data: { currentTimestamp, previousTimestamps } });
+    } catch(e) {
+        res.status(404).send({ status: 404, data: [] });
+    }
+});
+
 app.get('/road/:road', async (req: Request, res: Response) => {
     try {
         const road = fs.readFileSync(__dirname + `/../data/roads/${ req.params.road }.json`, 'utf8');
+
+        res.send({ status: 200, data: JSON.parse(road) });
+    } catch(e) {
+        res.status(404).send({ status: 404, data: [] });
+    }
+});
+
+app.get('/road/:road/historical/:timestamp', async (req: Request, res: Response) => {
+    try {
+        const road = fs.readFileSync(__dirname + `/../data/roads/historical/${ req.params.timestamp }/${ req.params.road }.json`, 'utf8');
 
         res.send({ status: 200, data: JSON.parse(road) });
     } catch(e) {

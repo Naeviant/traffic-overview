@@ -1,5 +1,6 @@
 export interface RoadData {
     road: string;
+    dataTimestamp: number;
     primaryDirection: string;
     secondaryDirection: string;
     primaryDirectionSections: (Junction | Section)[];
