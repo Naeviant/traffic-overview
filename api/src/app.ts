@@ -270,6 +270,16 @@ app.get('/road/:road', async (req: Request, res: Response) => {
     }
 });
 
+app.get('/road/:road/historical/:timestamp', async (req: Request, res: Response) => {
+    try {
+        const road = fs.readFileSync(__dirname + `/../data/roads/historical/${ req.params.timestamp }/${ req.params.road }.json`, 'utf8');
+
+        res.send({ status: 200, data: JSON.parse(road) });
+    } catch(e) {
+        res.status(404).send({ status: 404, data: [] });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server Listening on Port ${PORT}`);
 });
