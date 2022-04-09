@@ -35,7 +35,7 @@ async function fetchRoadList() {
 
 async function fetchRoadData(roads: string[]) {
     if (process.env.API_STOP_FETCH && process.env.API_STOP_FETCH != 'FALSE') return;
-    
+
     const timestamps = fs.readdirSync(__dirname + `/../data/roads/historical`);
     for (const timestamp of timestamps) {
         if (parseInt(timestamp) < Date.now() - 86400000) {
@@ -43,7 +43,7 @@ async function fetchRoadData(roads: string[]) {
         }
     }
 
-    const fetchTime = (Date.now() - 300000).toString();
+    const fetchTime = (Math.floor((Date.now() - 300000) / 60000) * 60000).toString();
     fs.mkdirSync(__dirname + `/../data/roads/historical/${ fetchTime }`);
     for (const road of roads) {
         if (fs.existsSync(__dirname + `/../data/roads/${ road }.json`)) {
@@ -73,7 +73,7 @@ async function fetchRoadData(roads: string[]) {
 
         const data: RoadData = {
             road: road,
-            dataTimestamp: Date.now(),
+            dataTimestamp: Math.floor(Date.now() / 60000) * 60000,
             primaryDirection: (Object.values(sections[road] as any)[0] as any).primaryDirection,
             secondaryDirection: (Object.values(sections[road] as any)[0] as any).secondaryDirection,
             primaryDirectionSections: [],
