@@ -34,14 +34,14 @@ async function fetchRoadList() {
 }
 
 async function fetchRoadData(roads: string[]) {
+    if (process.env.API_STOP_FETCH && process.env.API_STOP_FETCH != 'FALSE') return;
+    
     const timestamps = fs.readdirSync(__dirname + `/../data/roads/historical`);
     for (const timestamp of timestamps) {
         if (parseInt(timestamp) < Date.now() - 86400000) {
             fs.rmSync(__dirname + `/../data/roads/historical/${timestamp}`, { recursive: true, force: true });
         }
     }
-
-    if (process.env.API_STOP_FETCH && process.env.API_STOP_FETCH != 'FALSE') return;
 
     const fetchTime = (Date.now() - 300000).toString();
     fs.mkdirSync(__dirname + `/../data/roads/historical/${ fetchTime }`);
