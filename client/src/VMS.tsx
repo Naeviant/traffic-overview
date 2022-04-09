@@ -6,6 +6,7 @@ import {
 } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import PinDropIcon from '@mui/icons-material/PinDrop';
+import SIG from './SIG';
 
 interface VMSProps {
     lat: number;
@@ -116,14 +117,7 @@ function VMS(props: VMSProps) {
                     }}>
                         {
                             sig.map((sig: any, index: number) => (
-                                <div key={index} style={{
-                                    margin: '0 2px',
-                                    padding: '4px',
-                                    height: '30px',
-                                    backgroundColor: sig.slip ? 'red' : 'transparent'
-                                }}>
-                                    <img src={`/images/sig/AMI/${ sig.code }.png`} alt="SIG Screen" style={{ width: '30px', height: '30px' }} />
-                                </div>
+                                <SIG key={index} sig={sig} />
                             ))
                         }
                     </Box>
