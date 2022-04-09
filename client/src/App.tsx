@@ -16,11 +16,13 @@ import Event from './Event';
 import VMS from './VMS';
 import RoadSelector from './RoadSelector';
 import NotFound from './NotFound';
+import Loading from './Loading';
 
 function App() {
   const [road, setRoad] = useState<(string)>("");
   const [roads, setRoads] = useState<string[]>([]);
   const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const [colour, setColour] = useState<string>('blue');
 
   const roadChange = (newRoad: string) => {
@@ -43,8 +45,10 @@ function App() {
       });
     } 
     if ((!data && road) || (data && road && road !== data.road)) {
+      setLoading(true);
       axios.get(`${process.env.REACT_APP_API_BASE}road/${ road }`, { validateStatus: (status: number) => { return (status >= 200 && status < 300) || status === 404 }}).then((resp: AxiosResponse) => {
         setData(resp.data.data);
+        setLoading(false);
       });
     }
   });
@@ -99,86 +103,88 @@ function App() {
               <RoadSelector width="calc(100% - 112px)" road={ road } roads={ roads } setRoad={ roadChange } />
             </Box>
             {
-              data !== null && (!Array.isArray(data) || data.length > 1)
-              ?
-                <Grid container spacing={1}>
-                  <Grid item xs={5}>
-                    <DirectionHeader direction={ data.primaryDirection } colour={colour} />
-                  </Grid>
-                  <Grid item xs={2}>
-                    <RoadHeader road={ data.road } ringRoad={ data.circularRoad } colour={colour} />
-                  </Grid>
-                  <Grid item xs={5}>
-                    <DirectionHeader direction={ data.secondaryDirection } colour={colour} />
-                  </Grid>
-                  {
-                    [...data.primaryDirectionSections].reverse().map((section: any, index: number) => (
-                      section.interface === "JUNCTION"
-                      ?
+              loading
+              ? <Loading />
+              : data !== null && (!Array.isArray(data) || data.length > 1)
+                ?
+                  <Grid container spacing={1}>
+                    <Grid item xs={5}>
+                      <DirectionHeader direction={ data.primaryDirection } colour={colour} />
+                    </Grid>
+                    <Grid item xs={2}>
+                      <RoadHeader road={ data.road } ringRoad={ data.circularRoad } colour={colour} />
+                    </Grid>
+                    <Grid item xs={5}>
+                      <DirectionHeader direction={ data.secondaryDirection } colour={colour} />
+                    </Grid>
+                    {
+                      [...data.primaryDirectionSections].reverse().map((section: any, index: number) => (
+                        section.interface === "JUNCTION"
+                        ?
+                          <React.Fragment key={index}>
+                            <Grid item xs={5}>
+                              <JunctionHeader text={ section.payload.destination } colour={colour} />
+                            </Grid>
+                            <Grid item xs={2}>
+                              <JunctionHeader text={ section.payload.name } arrows colour={colour} />
+                            </Grid>
+                            <Grid item xs={5}>
+                              <JunctionHeader text={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.destination } colour={colour} />
+                            </Grid>
+                          </React.Fragment>
+                        : 
                         <React.Fragment key={index}>
-                          <Grid item xs={5}>
-                            <JunctionHeader text={ section.payload.destination } colour={colour} />
-                          </Grid>
-                          <Grid item xs={2}>
-                            <JunctionHeader text={ section.payload.name } arrows colour={colour} />
-                          </Grid>
-                          <Grid item xs={5}>
-                            <JunctionHeader text={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.destination } colour={colour} />
-                          </Grid>
-                        </React.Fragment>
-                      : 
-                      <React.Fragment key={index}>
-                          <Grid item xs={5} sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center'
-                          }}>
-                            <AverageSpeed speed={ Math.round(section.payload.speed)} />
-                            <Distance distance={ section.payload.length} />
-                            {
-                              [...section.payload.data].reverse().map((info: any, index: number) => (
-                                info.interface === "CCTV"
-                                ? 
-                                  <CCTV key={ info.payload.id } lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
-                                : info.interface === "VMS"
-                                  ?
-                                    <VMS key={ info.payload.address } lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
-                                  : info.interface === "EVENT"
+                            <Grid item xs={5} sx={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'center'
+                            }}>
+                              <AverageSpeed speed={ Math.round(section.payload.speed)} />
+                              <Distance distance={ section.payload.length} />
+                              {
+                                [...section.payload.data].reverse().map((info: any, index: number) => (
+                                  info.interface === "CCTV"
+                                  ? 
+                                    <CCTV key={ info.payload.id } lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
+                                  : info.interface === "VMS"
                                     ?
+                                      <VMS key={ info.payload.address } lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
+                                    : info.interface === "EVENT"
+                                      ?
+                                          <Event key={ info.payload.id } type={ info.payload.type } reason={ info.payload.reason } severity={ info.payload.severity } lanes={ info.payload.lanes } />
+                                      : <></>
+                                ))
+                              }
+                            </Grid>
+                            <Grid item xs={2}></Grid>
+                            <Grid item xs={5} sx={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'center'
+                            }}>
+                              <AverageSpeed speed={ Math.round(data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.speed)} />
+                              <Distance distance={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.length} />
+                              {
+                                [...data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.data].reverse().map((info: any, index: number) => (
+                                  info.interface === "CCTV"
+                                  ?
+                                    <CCTV key={ info.payload.id } lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
+                                  : info.interface === "VMS"
+                                    ?
+                                      <VMS key={ info.payload.address } lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
+                                    : info.interface === "EVENT"
+                                      ?
                                         <Event key={ info.payload.id } type={ info.payload.type } reason={ info.payload.reason } severity={ info.payload.severity } lanes={ info.payload.lanes } />
-                                    : <></>
-                              ))
-                            }
-                          </Grid>
-                          <Grid item xs={2}></Grid>
-                          <Grid item xs={5} sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center'
-                          }}>
-                            <AverageSpeed speed={ Math.round(data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.speed)} />
-                            <Distance distance={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.length} />
-                            {
-                              [...data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.data].reverse().map((info: any, index: number) => (
-                                info.interface === "CCTV"
-                                ?
-                                  <CCTV key={ info.payload.id } lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
-                                : info.interface === "VMS"
-                                  ?
-                                    <VMS key={ info.payload.address } lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
-                                  : info.interface === "EVENT"
-                                    ?
-                                      <Event key={ info.payload.id } type={ info.payload.type } reason={ info.payload.reason } severity={ info.payload.severity } lanes={ info.payload.lanes } />
-                                    : <></>
-                              ))
-                            }
-                          </Grid>
-                        </React.Fragment>
-                    ))
-                  }
-                </Grid>
-              : 
-                <NotFound />
+                                      : <></>
+                                ))
+                              }
+                            </Grid>
+                          </React.Fragment>
+                      ))
+                    }
+                  </Grid>
+                : 
+                  <NotFound />
             }
           </Box>
 
