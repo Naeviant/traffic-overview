@@ -108,33 +108,33 @@ function App() {
               : data !== null && (!Array.isArray(data) || data.length > 1)
                 ?
                   <Grid container spacing={1}>
-                    <Grid item xs={5}>
-                      <DirectionHeader direction={ data.primaryDirection } colour={colour} />
+                    <Grid item xs={6} sm={5}>
+                      <DirectionHeader direction={ data.primaryDirection } colour={colour} primary={true} />
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item sm={2} sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}>
                       <RoadHeader road={ data.road } ringRoad={ data.circularRoad } colour={colour} />
                     </Grid>
-                    <Grid item xs={5}>
-                      <DirectionHeader direction={ data.secondaryDirection } colour={colour} />
+                    <Grid item xs={6} sm={5}>
+                      <DirectionHeader direction={ data.secondaryDirection } colour={colour} primary={false} />
                     </Grid>
                     {
                       [...data.primaryDirectionSections].reverse().map((section: any, index: number) => (
                         section.interface === "JUNCTION"
                         ?
                           <React.Fragment key={index}>
-                            <Grid item xs={5}>
+                            <Grid item xs={6} sm={5}>
                               <JunctionHeader text={ section.payload.destination } colour={colour} />
                             </Grid>
-                            <Grid item xs={2}>
+                            <Grid item xs={2} sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}>
                               <JunctionHeader text={ section.payload.name } arrows colour={colour} />
                             </Grid>
-                            <Grid item xs={5}>
+                            <Grid item xs={6} sm={5}>
                               <JunctionHeader text={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.destination } colour={colour} />
                             </Grid>
                           </React.Fragment>
                         : 
                         <React.Fragment key={index}>
-                            <Grid item xs={5} sx={{
+                            <Grid item xs={6} sm={5} sx={{
                               display: 'flex',
                               flexDirection: 'column',
                               justifyContent: 'center'
@@ -156,8 +156,8 @@ function App() {
                                 ))
                               }
                             </Grid>
-                            <Grid item xs={2}></Grid>
-                            <Grid item xs={5} sx={{
+                            <Grid item sm={2} sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}></Grid>
+                            <Grid item xs={6} sm={5} sx={{
                               display: 'flex',
                               flexDirection: 'column',
                               justifyContent: 'center'

@@ -31,23 +31,23 @@ function Event(props: EventProps) {
                         top: '2px'
                     }} />
                 </Grid>
-                <Grid item>
+                <Grid item sx={{ width: { xs: 'calc(100% - 40px);' } }}>
                     <Typography variant='body1' sx={{ textTransform: 'capitalize' }}>{ type.toLowerCase() }</Typography>
-                    <Typography variant='caption'>{ reason }</Typography>
+                    <Typography variant='caption' sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}>{ reason }</Typography>
                 </Grid>
                 <Grid item sx={{
                     marginLeft: 'auto',
                     marginRight: 0
                 }}>
-                    <Typography variant="subtitle2" sx={{ textTransform: 'capitalize' }}>{ severity.toLowerCase() } Severity</Typography>
+                    <Typography variant="subtitle2" sx={{ textTransform: 'capitalize', display: { xs: 'none', sm: 'none', md: 'block', lg: 'block', xl: 'block' } }}>{ severity.toLowerCase() } Severity</Typography>
                 </Grid>
             </Grid>
             {
                 lanes.length > 0
                 ?
                 <>
-                    <br />
-                    <Grid container>
+                    <Grid container sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}>
+                        <br />
                         <table style={{ width: '100%', textAlign: 'center' }}>
                             <tbody>
                                 <tr>

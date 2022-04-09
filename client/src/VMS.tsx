@@ -27,7 +27,7 @@ function VMS(props: VMSProps) {
             color: '#AAAAAA'
         }}>
             <Grid container direction="row" alignItems="center">
-                <Grid item>
+                <Grid item sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}>
                     <InfoIcon sx={{
                         paddingRight: 2,
                         position: 'relative',
@@ -35,7 +35,13 @@ function VMS(props: VMSProps) {
                     }} />
                 </Grid>
                 <Grid item sx={{
-                    width: 'calc(100% - 120px)'
+                    width: {
+                        xs: 'calc(100% - 32px)',
+                        sm: 'calc(100% - 72px)',
+                        md: 'calc(100% - 120px)',
+                        lg: 'calc(100% - 120px)',
+                        xl: 'calc(100% - 120px)',
+                    }
                 }}>
                     {
                         vms 
@@ -124,7 +130,8 @@ function VMS(props: VMSProps) {
                 </Grid>
                 <Grid item sx={{
                     marginLeft: 'auto',
-                    marginRight: 0
+                    marginRight: 0,
+                    display: { xs: 'none', sm: 'none', md: 'block', lg: 'block', xl: 'block' }
                 }}>
                     <a href={ `https://www.google.com/maps?q=${ lat }+${ long }` } target="_blank" rel="noreferrer">
                         <PinDropIcon sx={{

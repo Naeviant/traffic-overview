@@ -28,8 +28,11 @@ function Distance(props: DistanceProps) {
                         top: '2px'
                     }} />
                 </Grid>
-                <Grid item>
+                <Grid item sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}>
                     Distance: { distance }m
+                </Grid>
+                <Grid item sx={{ display: { xs: 'block', sm: 'none', md: 'none', lg: 'none', xl: 'none' } }}>
+                    { distance }m
                 </Grid>
             </Grid>
         </Paper>

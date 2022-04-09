@@ -32,12 +32,14 @@ function JunctionHeader(props: JunctionHeaderProps) {
                                     position: 'relative',
                                     top: '4px',
                                     right: '24px',
+                                    display: { xs: 'none', sm: 'none', md: 'inline-block', lg: 'inline-block', xl: 'inline-block' }
                                 }} />
                                 { text }
                                 <ArrowDownwardIcon sx={{
                                     position: 'relative',
                                     top: '4px',
                                     left: '24px',
+                                    display: { xs: 'none', sm: 'none', md: 'inline-block', lg: 'inline-block', xl: 'inline-block' }
                                 }} />
                             </>
                         : text
