@@ -35,8 +35,16 @@ function CCTV(props: CCTVProps) {
                     }} />
                 </Grid>
                 <Grid item>
-                    <Typography variant='body1'>CCTV</Typography>
-                    <Typography variant='caption'>{ description }</Typography>
+                    <a href={ image } target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                        <Typography sx={{
+                            color: '#AAAAAA',
+                            display: { xs: 'block', sm: 'none', md: 'none', lg: 'none', xl: 'none' }
+                        }}>
+                            CCTV
+                        </Typography>
+                    </a>
+                    <Typography variant='body1' sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}>CCTV</Typography>
+                    <Typography variant='caption' sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}>{ description }</Typography>
                 </Grid>
                 <Grid item sx={{
                     marginLeft: 'auto',
@@ -47,7 +55,8 @@ function CCTV(props: CCTVProps) {
                             position: 'relative',
                             top: '2px',
                             paddingRight: 1,
-                            color: '#AAAAAA'
+                            color: '#AAAAAA',
+                            display: { xs: 'none', sm: 'inline-block', md: 'inline-block', lg: 'inline-block', xl: 'inline-block' }
                         }} />
                     </a>
                     <a href={ `https://www.google.com/maps?q=${ lat }+${ long }` } target="_blank" rel="noreferrer">
@@ -55,7 +64,8 @@ function CCTV(props: CCTVProps) {
                             position: 'relative',
                             top: '2px',
                             paddingRight: 1,
-                            color: '#AAAAAA'
+                            color: '#AAAAAA',
+                            display: { xs: 'none', sm: 'none', md: 'inline-block', lg: 'inline-block', xl: 'inline-block' }
                         }} />
                     </a>
                 </Grid>

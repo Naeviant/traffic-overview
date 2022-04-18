@@ -3,14 +3,17 @@ import {
   Paper,
   Typography
 } from '@mui/material';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
 interface DirectionHeaderProps {
+    primary: boolean;
     direction: string;
     colour: string;
 }
 
 function DirectionHeader(props: DirectionHeaderProps) {
-    const { direction, colour } = props;
+    const { primary, direction, colour } = props;
 
     return (
         <Paper sx={{ 
@@ -23,7 +26,30 @@ function DirectionHeader(props: DirectionHeaderProps) {
             justifyContent: 'center',
             alignItems: 'center'
         }}>
-            <Typography align="center" variant="h4">{ direction }</Typography>
+            {
+                primary
+                ?   <ArrowUpwardIcon sx={{
+                        marginRight: '16px',
+                        display: { xs: 'block', sm: 'block', md: 'none', lg: 'none', xl: 'none' }
+                    }} />
+                :   <ArrowDownwardIcon sx={{
+                        marginRight: '16px',
+                        display: { xs: 'block', sm: 'block', md: 'none', lg: 'none', xl: 'none' }
+                    }} />
+            }
+            <Typography align="center" variant="h4" sx={{ display: { xs: 'block', sm: 'block', md: 'none', lg: 'none', xl: 'none' } }}>{ direction }</Typography>
+            <Typography align="center" variant="h4" sx={{ display: { xs: 'none', sm: 'none', md: 'block', lg: 'block', xl: 'block' } }}>
+                {
+                    {
+                        'NB': 'Northbound',
+                        'EB': 'Eastbound',
+                        'SB': 'Southbound',
+                        'WB': 'Westbound',
+                        'CW': 'Clockwise',
+                        'AC': 'Anticlockwise'
+                    }[direction]
+                }
+            </Typography>
         </Paper>
     );
 }

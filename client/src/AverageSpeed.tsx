@@ -28,8 +28,11 @@ function AverageSpeed(props: AverageSpeedProps) {
                         top: '2px'
                     }} />
                 </Grid>
-                <Grid item>
+                <Grid item sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}>
                     Average Speed: { speed }mph
+                </Grid>
+                <Grid item sx={{ display: { xs: 'block', sm: 'none', md: 'none', lg: 'none', xl: 'none' } }}>
+                    { speed }mph
                 </Grid>
             </Grid>
         </Paper>
