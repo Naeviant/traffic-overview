@@ -119,13 +119,19 @@ function App() {
               : data !== null && (!Array.isArray(data) || data.length > 1)
                 ?
                   <Grid container>
-                    <Grid item p={2} lg={2} xl={2} sx={{ display: { xs: 'none', sm: 'none', md: 'none', lg: 'block', xl: 'block' } }}>
+                    <Grid item p={2} lg={2} xl={2} sx={{ display: { xs: 'none', sm: 'none', md: 'none', lg: 'block', xl: 'block' }, position: 'fixed', top: 0, bottom: 0 }}>
                       <Button variant="contained" onClick={ unsetRoad } fullWidth sx={{ paddingTop: '16px', paddingBottom: '16px', marginBottom: '16px' }}>Home</Button>
                       <RoadSelector width="100%" road={ road } roads={ roads } setRoad={ roadChange } />
                       <br />
                       <hr />
                       <br />
-                      <Accordion disableGutters>
+                      <Accordion 
+                        disableGutters
+                        sx={{
+                          maxHeight: 'calc(100% - 200px)',
+                          overflowY: 'auto'
+                        }}
+                      >
                         <AccordionSummary
                           expandIcon={<ExpandMoreIcon sx={{ color: '#AAAAAA' }} />}
                           sx={{
@@ -159,6 +165,8 @@ function App() {
                           }
                         </AccordionDetails>
                       </Accordion>
+                    </Grid>
+                    <Grid item xs={0} sm={0} md={0} lg={2} xl={2}>
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={10} xl={10}>
                       <Grid container spacing={1}>
