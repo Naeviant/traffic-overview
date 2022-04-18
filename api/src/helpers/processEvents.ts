@@ -1,6 +1,7 @@
+import { APIEvent } from "../types/APIEvent";
 import { Event } from "../types/RoadData";
 
-export default function processEvents(eventData: any[], subsections: number[]) {
+export default function processEvents(eventData: APIEvent[], subsections: number[]) {
     return new Promise((resolve) => {
         const data: Event[] = [];
 

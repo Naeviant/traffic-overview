@@ -1,6 +1,7 @@
+import { APIVMS, APIVMSGroup } from '../types/APIVMS';
 import { VMSGroup, VMS, SIG } from "../types/RoadData";
 
-export default function processVMS(vmsData: any[], subsections: number[]) {
+export default function processVMS(vmsData: APIVMSGroup[], subsections: number[]) {
     return new Promise((resolve) => {
         const data: VMSGroup[] = [];
 
@@ -18,13 +19,13 @@ export default function processVMS(vmsData: any[], subsections: number[]) {
             }
           }
 
-          const sig: SIG[] = collection.filter((x: any) => x.type === 'SIG' || x.type === 'AMI').map((x: any) => {
+          const sig: SIG[] = collection.filter((x) => x.type === 'SIG' || x.type === 'AMI').map((x) => {
             return {
               address: x.geogAddr,
               lat: x.latitude,
               long: x.longitude,
               code: convertCode(Number(x.code)),
-              type: x.genericType,
+              type: x.genericType ?? '',
               slip: !['A', 'B'].some((s: string) => x.geogAddr.substr(x.geogAddr.length - 2).indexOf(s) > -1)
             }
           });
@@ -48,7 +49,7 @@ export default function processVMS(vmsData: any[], subsections: number[]) {
           if (data[i].payload.address === data[i + 1].payload.address) {
             data[i].payload.sig = data[i].payload.sig.concat(data[i + 1].payload.sig);
             data.splice(i + 1, 1);
-            data[i].payload.sig.sort((a: any, b: any) => (a.slip === b.slip) ? 0 : a.slip ? -1 : 1);
+            data[i].payload.sig.sort((a, b) => (a.slip === b.slip) ? 0 : a.slip ? -1 : 1);
           }
         }
 
@@ -56,7 +57,7 @@ export default function processVMS(vmsData: any[], subsections: number[]) {
     });
 }
 
-function convertCode(code: number | string): string {
+function convertCode(code: number | string | null): string {
     switch(code) {
       case 2:
         return 'NATIONAL_SPEED_LIMIT';

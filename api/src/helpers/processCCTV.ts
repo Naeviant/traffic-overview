@@ -1,6 +1,7 @@
+import { APICCTV } from "../types/APICCTV";
 import { CCTV } from "../types/RoadData";
 
-export default function processCCTV(cctvData: any[], subsections: number[]) {
+export default function processCCTV(cctvData: APICCTV[], subsections: number[]) {
     return new Promise((resolve) => {
         const data: CCTV[] = [];
 
@@ -8,13 +9,13 @@ export default function processCCTV(cctvData: any[], subsections: number[]) {
             const camera: CCTV = {
                 interface: 'CCTV',
                 payload: {
-                    id: (cctv as any).id,
-                    description: (cctv as any).description,
-                    lat: (cctv as any).latitude,
-                    long: (cctv as any).longitude,
-                    url: (cctv as any).url,
-                    image: `https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/${(cctv as any).url.replace('http://public.highwaystrafficcameras.co.uk/cctvpublicaccess/html/', '').replace('.html', '')}.jpg`,
-                    available: (cctv as any).available
+                    id: cctv.id,
+                    description: cctv.description,
+                    lat: cctv.latitude,
+                    long: cctv.longitude,
+                    url: cctv.url,
+                    image: `https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/${cctv.url.replace('http://public.highwaystrafficcameras.co.uk/cctvpublicaccess/html/', '').replace('.html', '')}.jpg`,
+                    available: cctv.available
                 }
             }
             
