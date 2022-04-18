@@ -42,7 +42,7 @@ export interface Event {
             laneName: string;
             laneStatus: string;
         }[];
-        reason: string;
+        reason: string | null;
     };
 }
 

@@ -10,6 +10,10 @@ import processEvents from './helpers/processEvents';
 import processCCTV from './helpers/processCCTV';
 import processVMS from './helpers/processVMS';
 import sort from './helpers/sort';
+import { APICCTV } from './types/APICCTV';
+import { APIEvent } from './types/APIEvent';
+import { APIVMSGroup } from './types/APIVMS';
+import { APIRoads } from './types/APIRoads';
 
 dotenv.config();
 const PORT = process.env.API_PORT ?? 8080;
@@ -53,7 +57,7 @@ async function fetchRoadData(roads: string[]) {
 
     const sectionsReq: Promise<AxiosResponse>[] = roads.map((x: string) => { return axios.get(`https://www.trafficengland.com/api/network/getJunctionSections?roadName=${ x }`); });
     const sectionsRes: AxiosResponse[] = await axios.all(sectionsReq);
-    const sections = Object.fromEntries(roads.map((x: string) => [x, sectionsRes[roads.indexOf(x)].data]));
+    const sections: APIRoads = Object.fromEntries(roads.map((x: string) => [x, sectionsRes[roads.indexOf(x)].data]));
 
     const dataReq: Promise<AxiosResponse>[] = [
         axios.get(
@@ -66,7 +70,7 @@ async function fetchRoadData(roads: string[]) {
             'https://www.trafficengland.com/api/vms/getToBounds?bbox=-5.7,56.0,1.65,50',
         )
     ];
-    const dataRes: any[] = (await axios.all(dataReq)).map((x: AxiosResponse) => x.data);
+    const dataRes: (APIEvent[] | APICCTV[] | APIVMSGroup[])[] = (await axios.all(dataReq)).map((x: AxiosResponse) => x.data);
 
     for (const road of roads) {
         if (!sections[road]) continue;
@@ -74,50 +78,50 @@ async function fetchRoadData(roads: string[]) {
         const data: RoadData = {
             road: road,
             dataTimestamp: Math.floor(Date.now() / 60000) * 60000,
-            primaryDirection: (Object.values(sections[road] as any)[0] as any).primaryDirection,
-            secondaryDirection: (Object.values(sections[road] as any)[0] as any).secondaryDirection,
+            primaryDirection: Object.values(sections[road])[0].primaryDirection,
+            secondaryDirection: Object.values(sections[road])[0].secondaryDirection,
             primaryDirectionSections: [],
             secondaryDirectionSections: [],
-            circularRoad: (Object.values(sections[road] as any)[0] as any).circularRoad
+            circularRoad: Object.values(sections[road])[0].circularRoad
         };
 
         for (const section of Object.values(sections[road])) {
-            if ((section as any).junctionName === 'M60') continue;
+            if (section.junctionName === 'M60') continue;
 
             const primaryDirectionJunction: Junction = {
                 interface: 'JUNCTION',
                 payload: {
-                    name: (section as any).junctionName,
-                    destination: (section as any).primaryDirectionDescription
+                    name: section.junctionName,
+                    destination: section.primaryDirectionDescription
                 }
             };
             const secondaryDirectionJunction: Junction = {
                 interface: 'JUNCTION',
                 payload: {
-                    name: (section as any).junctionName,
-                    destination: (section as any).secondaryDirectionDescription
+                    name: section.junctionName,
+                    destination: section.secondaryDirectionDescription
                 }
             };
             data.primaryDirectionSections.push(primaryDirectionJunction);
             data.secondaryDirectionSections.push(secondaryDirectionJunction);
 
-            if ((section as any).primaryDownstreamJunctionSection) {
+            if (section.primaryDownstreamJunctionSection) {
                 const primaryDirectionSection: Section = {
                     interface: 'SECTION',
                     payload: {
-                        id: (section as any).primaryDownstreamJunctionSection.id,
-                        subsections: (section as any).primaryDownstreamJunctionSection.links.map((x: any) => { return x.id }),
-                        speed: (section as any).primaryDownstreamJunctionSection.avgSpeed,
-                        length: (section as any).primaryDownstreamJunctionSection.links.map((x: any) => { return x.length }).reduce((a: number, b: number) => a + b, 0),
-                        speedLimits: Array.from(new Set((section as any).primaryDownstreamJunctionSection.links.map((x: any) => { return x.speedLimit }).filter((x: number) => x != 70))),
+                        id: section.primaryDownstreamJunctionSection.id,
+                        subsections: Array.isArray(section.primaryDownstreamJunctionSection.links) ? section.primaryDownstreamJunctionSection.links.map((x) => { return x.id }) : [],
+                        speed: section.primaryDownstreamJunctionSection.avgSpeed,
+                        length: Array.isArray(section.primaryDownstreamJunctionSection.links) ? section.primaryDownstreamJunctionSection.links.map((x) => { return x.length }).reduce((a: number, b: number) => a + b, 0) : 0,
+                        speedLimits: Array.isArray(section.primaryDownstreamJunctionSection.links) ? Array.from(new Set(section.primaryDownstreamJunctionSection.links.map((x) => { return x.speedLimit }).filter((x: number) => x != 70))) : [],
                         data: []
                     }
                 }
                 
                 const promises: [Event[], CCTV[], VMSGroup[]] = await Promise.all([
-                    processEvents(dataRes[0], primaryDirectionSection.payload.subsections),
-                    processCCTV(dataRes[1], primaryDirectionSection.payload.subsections),
-                    processVMS(dataRes[2], primaryDirectionSection.payload.subsections)
+                    processEvents(dataRes[0] as APIEvent[], primaryDirectionSection.payload.subsections),
+                    processCCTV(dataRes[1] as APICCTV[], primaryDirectionSection.payload.subsections),
+                    processVMS(dataRes[2] as APIVMSGroup[], primaryDirectionSection.payload.subsections)
                 ]) as [Event[], CCTV[], VMSGroup[]];
                 primaryDirectionSection.payload.data.push(...promises[0]);
                 primaryDirectionSection.payload.data.push(...promises[1]);
@@ -128,23 +132,23 @@ async function fetchRoadData(roads: string[]) {
                 data.primaryDirectionSections.push(primaryDirectionSection);
             }
 
-            if ((section as any).secondaryUpstreamJunctionSection) {
+            if (section.secondaryUpstreamJunctionSection) {
                 const secondaryDirectionSection: Section = {
                     interface: 'SECTION',
                     payload: {
-                        id: (section as any).secondaryUpstreamJunctionSection.id,
-                        subsections: (section as any).secondaryUpstreamJunctionSection.links.map((x: any) => { return x.id }),
-                        speed: (section as any).secondaryUpstreamJunctionSection.avgSpeed,
-                        length: (section as any).secondaryUpstreamJunctionSection.links.map((x: any) => { return x.length }).reduce((a: number, b: number) => a + b, 0),
-                        speedLimits: Array.from(new Set((section as any).secondaryUpstreamJunctionSection.links.map((x: any) => { return x.speedLimit }).filter((x: number) => x != 70))),
+                        id: section.secondaryUpstreamJunctionSection.id,
+                        subsections: Array.isArray(section.secondaryUpstreamJunctionSection.links) ? section.secondaryUpstreamJunctionSection.links.map((x) => { return x.id }) : [],
+                        speed: section.secondaryUpstreamJunctionSection.avgSpeed,
+                        length: Array.isArray(section.secondaryUpstreamJunctionSection.links) ? section.secondaryUpstreamJunctionSection.links.map((x) => { return x.length }).reduce((a: number, b: number) => a + b, 0) : 0,
+                        speedLimits: Array.isArray(section.secondaryUpstreamJunctionSection.links) ? Array.from(new Set(section.secondaryUpstreamJunctionSection.links.map((x) => { return x.speedLimit }).filter((x: number) => x != 70))) : [],
                         data: []
                     }
                 }
                 
                 const promises: [Event[], CCTV[], VMSGroup[]] = await Promise.all([
-                    processEvents(dataRes[0], secondaryDirectionSection.payload.subsections),
-                    processCCTV(dataRes[1], secondaryDirectionSection.payload.subsections),
-                    processVMS(dataRes[2], secondaryDirectionSection.payload.subsections)
+                    processEvents(dataRes[0] as APIEvent[], secondaryDirectionSection.payload.subsections),
+                    processCCTV(dataRes[1] as APICCTV[], secondaryDirectionSection.payload.subsections),
+                    processVMS(dataRes[2] as APIVMSGroup[], secondaryDirectionSection.payload.subsections)
                 ]) as [Event[], CCTV[], VMSGroup[]];
                 secondaryDirectionSection.payload.data.push(...promises[0]);
                 secondaryDirectionSection.payload.data.push(...promises[1]);
