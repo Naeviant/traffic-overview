@@ -9,11 +9,11 @@ import { CCTV, Event, Junction, RoadData, Section, VMSGroup } from './types/Road
 import processEvents from './helpers/processEvents';
 import processCCTV from './helpers/processCCTV';
 import processVMS from './helpers/processVMS';
-import sort from './helpers/sort';
 import { APICCTV } from './types/APICCTV';
 import { APIEvent } from './types/APIEvent';
 import { APIVMSGroup } from './types/APIVMS';
 import { APIRoads } from './types/APIRoads';
+import build from './helpers/build';
 
 dotenv.config();
 const PORT = process.env.API_PORT ?? 8080;
@@ -123,11 +123,8 @@ async function fetchRoadData(roads: string[]) {
                     processCCTV(dataRes[1] as APICCTV[], primaryDirectionSection.payload.subsections),
                     processVMS(dataRes[2] as APIVMSGroup[], primaryDirectionSection.payload.subsections)
                 ]) as [Event[], CCTV[], VMSGroup[]];
-                primaryDirectionSection.payload.data.push(...promises[0]);
-                primaryDirectionSection.payload.data.push(...promises[1]);
-                primaryDirectionSection.payload.data.push(...promises[2]);
 
-                primaryDirectionSection.payload.data.sort(sort);
+                primaryDirectionSection.payload.data = build(primaryDirectionSection.payload.subsections, promises[0], promises[1], promises[2], 'PRIMARY');
 
                 data.primaryDirectionSections.push(primaryDirectionSection);
             }
@@ -150,11 +147,8 @@ async function fetchRoadData(roads: string[]) {
                     processCCTV(dataRes[1] as APICCTV[], secondaryDirectionSection.payload.subsections),
                     processVMS(dataRes[2] as APIVMSGroup[], secondaryDirectionSection.payload.subsections)
                 ]) as [Event[], CCTV[], VMSGroup[]];
-                secondaryDirectionSection.payload.data.push(...promises[0]);
-                secondaryDirectionSection.payload.data.push(...promises[1]);
-                secondaryDirectionSection.payload.data.push(...promises[2]);
-
-                secondaryDirectionSection.payload.data.sort(sort);
+                
+                secondaryDirectionSection.payload.data = build(secondaryDirectionSection.payload.subsections, promises[0], promises[1], promises[2], 'SECONDARY');
 
                 data.secondaryDirectionSections.push(secondaryDirectionSection);
             }

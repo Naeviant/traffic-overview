@@ -227,7 +227,7 @@ function App() {
                                   <AverageSpeed speed={ Math.round(data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.speed)} />
                                   <Distance distance={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.length} />
                                   {
-                                    [...data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.data].reverse().map((info: any, index: number) => (
+                                    data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.data.map((info: any, index: number) => (
                                       info.interface === "CCTV"
                                       ?
                                         <CCTV key={ info.payload.id } lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
