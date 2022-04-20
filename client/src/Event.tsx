@@ -60,7 +60,7 @@ function Event(props: EventProps) {
                                     <tr>
                                     {
                                         lanes.map((lane, index) => (
-                                            <td key={ index } style={{ textTransform: 'capitalize' }}>{ lane.laneStatus.toLowerCase() }</td>
+                                            <td key={ index } style={{ textTransform: 'capitalize' }}>{ lane.laneStatus === 'HARD_SHOULDER_RUNNING' ? 'Running' : lane.laneStatus.toLowerCase() }</td>
                                         ))
                                     }
                                 </tr>
