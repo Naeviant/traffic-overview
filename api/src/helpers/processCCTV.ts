@@ -13,6 +13,8 @@ export default function processCCTV(cctvData: APICCTV[], subsections: number[]) 
                     description: cctv.description,
                     lat: cctv.latitude,
                     long: cctv.longitude,
+                    linkId: cctv.linkId,
+                    chainage: cctv.chainage,
                     url: cctv.url,
                     image: `https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/${cctv.url.replace('http://public.highwaystrafficcameras.co.uk/cctvpublicaccess/html/', '').replace('.html', '')}.jpg`,
                     available: cctv.available

@@ -38,7 +38,9 @@ export default function processVMS(vmsData: APIVMSGroup[], subsections: number[]
                   vms: vms,
                   sig: sig,
                   lat: collection[0].latitude,
-                  long: collection[0].longitude
+                  long: collection[0].longitude,
+                  linkId: collection[0].linkId,
+                  chainage: collection[0].chainage
               }
           };
 
