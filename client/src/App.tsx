@@ -44,6 +44,15 @@ function App() {
     setRoad("");
   }
 
+  const refresh = (e: any) => {
+    setLoading(true);
+    axios.get(`${process.env.REACT_APP_API_BASE}road/${ road }`, { validateStatus: (status: number) => { return (status >= 200 && status < 300) || status === 404 }}).then((resp: AxiosResponse) => {
+      refs.current = [];
+      setData(resp.data.data);
+      setLoading(false);
+    });
+  }
+
   const jump = (index: number) => {
     refs.current.filter((x: any) => x)[index].scrollIntoView();
   }
@@ -111,7 +120,8 @@ function App() {
               paddingBottom: '16px',
             }}>
               <Button variant="contained" onClick={ unsetRoad } sx={{ marginRight: '16px' }}>Home</Button>
-              <RoadSelector width="calc(100% - 112px)" road={ road } roads={ roads } setRoad={ roadChange } />
+              <Button variant="contained" onClick={ refresh } sx={{ marginRight: '16px' }}>Refresh</Button>
+              <RoadSelector width="calc(100% - 224px)" road={ road } roads={ roads } setRoad={ roadChange } />
             </Box>
             {
               loading
@@ -120,7 +130,16 @@ function App() {
                 ?
                   <Grid container>
                     <Grid item p={2} lg={2} xl={2} sx={{ display: { xs: 'none', sm: 'none', md: 'none', lg: 'block', xl: 'block' }, position: 'fixed', top: 0, bottom: 0 }}>
-                      <Button variant="contained" onClick={ unsetRoad } fullWidth sx={{ paddingTop: '16px', paddingBottom: '16px', marginBottom: '16px' }}>Home</Button>
+                      <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                          <Button variant="contained" onClick={ unsetRoad } fullWidth sx={{ paddingTop: '16px', paddingBottom: '16px', marginBottom: '16px' }}>Home</Button>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Button variant="contained" onClick={ refresh } fullWidth sx={{ paddingTop: '16px', paddingBottom: '16px', marginBottom: '16px' }}>Refresh</Button>
+                        </Grid>
+                      </Grid>
+                      <Typography variant="caption" align="center" component="p">Data Fetched At: { (new Date(data.dataTimestamp).toISOString().match(/(\d{4}\-\d{2}\-\d{2})T(\d{2}:\d{2}:\d{2})/) ?? ['', '', ''])[2] }</Typography>
+                      <br />
                       <RoadSelector width="100%" road={ road } roads={ roads } setRoad={ roadChange } />
                       <br />
                       <hr />
