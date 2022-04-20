@@ -53,6 +53,8 @@ export interface CCTV {
         description: string;
         lat: number;
         long: number;
+        linkId: number;
+        chainage: number;
         url: string;
         image: string;
         available: boolean;
@@ -66,6 +68,8 @@ export interface VMSGroup {
         address: string;
         lat: number;
         long: number;
+        linkId: number;
+        chainage: number;
         vms: VMS | null;
         sig: SIG[];
     };
