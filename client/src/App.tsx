@@ -77,7 +77,11 @@ function App() {
       setLoading(true);
       axios.get(`${process.env.REACT_APP_API_BASE}road/${ road }`, { validateStatus: (status: number) => { return (status >= 200 && status < 300) || status === 404 }}).then((resp: AxiosResponse) => {
         refs.current = [];
-        setData(resp.data.data);
+        if (resp.status === 404) {
+          setData({ road });
+        } else {
+          setData(resp.data.data);
+        }
         setLoading(false);
       });
     }
@@ -164,7 +168,7 @@ function App() {
             {
               loading
               ? <Loading />
-              : data !== null && (!Array.isArray(data) || data.length > 1)
+              : data !== null && data.timestamp
                 ?
                   <Grid container>
                     <Grid item p={2} lg={2} xl={2} sx={{ display: { xs: 'none', sm: 'none', md: 'none', lg: 'block', xl: 'block' }, position: 'fixed', top: 0, bottom: 0 }}>
@@ -336,7 +340,7 @@ function App() {
                     </Grid>
                   </Grid>
                 : 
-                  <NotFound />
+                  <NotFound unsetRoad={unsetRoad} />
             }
           </Box>
 
