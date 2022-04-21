@@ -6,7 +6,11 @@ import {
   AccordionSummary,
   Box,
   Button,
-  Grid, Typography
+  Checkbox,
+  FormGroup,
+  FormControlLabel,
+  Grid,
+  Typography
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
@@ -28,6 +32,12 @@ function App() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [colour, setColour] = useState<string>('blue');
+  const [showSpeeds, setShowSpeeds] = useState<boolean>(true);
+  const [showDistances, setShowDistances] = useState<boolean>(true);
+  const [showCCTV, setShowCCTV] = useState<boolean>(true);
+  const [showVMS, setShowVMS] = useState<boolean>(true);
+  const [showIncidents, setShowIncidents] = useState<boolean>(true);
+  const [showRoadworks, setShowRoadworks] = useState<boolean>(true);
 
   const refs = useRef<any>([]);
 
@@ -123,6 +133,34 @@ function App() {
               <Button variant="contained" onClick={ refresh } sx={{ marginRight: '16px' }}>Refresh</Button>
               <RoadSelector width="calc(100% - 224px)" road={ road } roads={ roads } setRoad={ roadChange } />
             </Box>
+            <Box mx={1} px={1} sx={{
+              display: { xs: 'flex', sm: 'flex', md: 'flex', lg: 'none', xl: 'none' },
+              backgroundColor: "#111111",
+              color: "#AAAAAA"
+            }}>
+              <FormGroup>
+                <Grid container>
+                  <Grid item xs={6}>
+                    <FormControlLabel control={<Checkbox checked={showSpeeds} onChange={() => setShowSpeeds(!showSpeeds)} sx={{ color: "#AAAAAA" }} />} label="Speeds" />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <FormControlLabel control={<Checkbox checked={showDistances} onChange={() => setShowDistances(!showDistances)} sx={{ color: "#AAAAAA" }} />} label="Distances" />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <FormControlLabel control={<Checkbox checked={showCCTV} onChange={() => setShowCCTV(!showCCTV)} sx={{ color: "#AAAAAA" }} />} label="CCTV" />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <FormControlLabel control={<Checkbox checked={showVMS} onChange={() => setShowVMS(!showVMS)} sx={{ color: "#AAAAAA" }} />} label="VMS" />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <FormControlLabel control={<Checkbox checked={showIncidents} onChange={() => setShowIncidents(!showIncidents)} sx={{ color: "#AAAAAA" }} />} label="Incidents" />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <FormControlLabel control={<Checkbox checked={showRoadworks} onChange={() => setShowRoadworks(!showRoadworks)} sx={{ color: "#AAAAAA" }} />} label="Roadworks" />
+                  </Grid>
+                </Grid>
+              </FormGroup>
+            </Box>
             {
               loading
               ? <Loading />
@@ -138,16 +176,31 @@ function App() {
                           <Button variant="contained" onClick={ refresh } fullWidth sx={{ paddingTop: '16px', paddingBottom: '16px', marginBottom: '16px' }}>Refresh</Button>
                         </Grid>
                       </Grid>
-                      <Typography variant="caption" align="center" component="p">Data Fetched At: { (new Date(data.dataTimestamp).toISOString().match(/(\d{4}\-\d{2}\-\d{2})T(\d{2}:\d{2}:\d{2})/) ?? ['', '', ''])[2] }</Typography>
-                      <br />
                       <RoadSelector width="100%" road={ road } roads={ roads } setRoad={ roadChange } />
                       <br />
-                      <hr />
-                      <br />
+                      <Typography variant="caption" align="center" component="p">Data Fetched At: { (new Date(data.dataTimestamp).toISOString().match(/(\d{4}\-\d{2}\-\d{2})T(\d{2}:\d{2}:\d{2})/) ?? ['', '', ''])[2] }</Typography>
+                      <Box
+                        my={2}
+                        p={2}
+                        sx={{
+                          backgroundColor: '#111111',
+                          color: '#AAAAAA'
+                        }}
+                      >
+                        <FormGroup>
+                          <FormControlLabel control={<Checkbox checked={showSpeeds} onChange={() => setShowSpeeds(!showSpeeds)} sx={{ color: "#AAAAAA" }} />} label="Show Speeds" />
+                          <FormControlLabel control={<Checkbox checked={showDistances} onChange={() => setShowDistances(!showDistances)} sx={{ color: "#AAAAAA" }} />} label="Show Distances" />
+                          <FormControlLabel control={<Checkbox checked={showCCTV} onChange={() => setShowCCTV(!showCCTV)} sx={{ color: "#AAAAAA" }} />} label="Show CCTV" />
+                          <FormControlLabel control={<Checkbox checked={showVMS} onChange={() => setShowVMS(!showVMS)} sx={{ color: "#AAAAAA" }} />} label="Show VMS" />
+                          <FormControlLabel control={<Checkbox checked={showIncidents} onChange={() => setShowIncidents(!showIncidents)} sx={{ color: "#AAAAAA" }} />} label="Show Incidents" />
+                          <FormControlLabel control={<Checkbox checked={showRoadworks} onChange={() => setShowRoadworks(!showRoadworks)} sx={{ color: "#AAAAAA" }} />} label="Show Roadworks" />
+                        </FormGroup>
+                      </Box>
                       <Accordion 
                         disableGutters
                         sx={{
-                          maxHeight: 'calc(100% - 200px)',
+                          maxHeight: 'calc(100% - 488px)',
+                          borderRadius: '0 !important',
                           overflowY: 'auto'
                         }}
                       >
@@ -220,17 +273,25 @@ function App() {
                                   flexDirection: 'column',
                                   justifyContent: 'center'
                                 }}>
-                                  <AverageSpeed speed={ Math.round(section.payload.speed)} />
-                                  <Distance distance={ section.payload.length} />
+                                  {
+                                    showSpeeds
+                                    ? <AverageSpeed speed={ Math.round(section.payload.speed)} />
+                                    : null
+                                  }
+                                  {
+                                    showDistances
+                                    ? <Distance distance={ section.payload.length} />
+                                    : null
+                                  }
                                   {
                                     [...section.payload.data].reverse().map((info: any, index: number) => (
-                                      info.interface === "CCTV"
+                                      info.interface === "CCTV" && showCCTV
                                       ? 
                                         <CCTV key={ info.payload.id } lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
-                                      : info.interface === "VMS"
+                                      : info.interface === "VMS" && showVMS
                                         ?
                                           <VMS key={ info.payload.address } lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
-                                        : info.interface === "EVENT"
+                                        : info.interface === "EVENT" && ((info.payload.type !== "ROADWORKS" && showIncidents) || (info.payload.type === "ROADWORKS" && showRoadworks))
                                           ?
                                               <Event key={ info.payload.id } type={ info.payload.type } reason={ info.payload.reason } severity={ info.payload.severity } lanes={ info.payload.lanes } />
                                           : <></>
@@ -243,17 +304,25 @@ function App() {
                                   flexDirection: 'column',
                                   justifyContent: 'center'
                                 }}>
-                                  <AverageSpeed speed={ Math.round(data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.speed)} />
-                                  <Distance distance={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.length} />
+                                  {
+                                    showSpeeds
+                                    ? <AverageSpeed speed={ Math.round(data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.speed)} />
+                                    : null
+                                  }
+                                  {
+                                    showDistances
+                                    ? <Distance distance={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.length} />
+                                    : null
+                                  }
                                   {
                                     data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.data.map((info: any, index: number) => (
-                                      info.interface === "CCTV"
+                                      info.interface === "CCTV" && showCCTV
                                       ?
                                         <CCTV key={ info.payload.id } lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
-                                      : info.interface === "VMS"
+                                      : info.interface === "VMS" && showVMS
                                         ?
                                           <VMS key={ info.payload.address } lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
-                                        : info.interface === "EVENT"
+                                        : info.interface === "EVENT" && ((info.payload.type !== "ROADWORKS" && showIncidents) || (info.payload.type === "ROADWORKS" && showRoadworks))
                                           ?
                                             <Event key={ info.payload.id } type={ info.payload.type } reason={ info.payload.reason } severity={ info.payload.severity } lanes={ info.payload.lanes } />
                                           : <></>
