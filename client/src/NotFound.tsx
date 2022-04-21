@@ -1,7 +1,13 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 
-function NotFound() {
+interface NotFoundProps {
+  unsetRoad(e: any): void;
+}
+
+function NotFound(props: NotFoundProps) {
+  const { unsetRoad } = props;
+
   return (
     <Box sx={{
       overflowY: 'auto',
@@ -14,6 +20,7 @@ function NotFound() {
         <div>
           <h1 style={{ fontSize: '4rem' }}>Data Unavailable</h1>
           <p>No further information about this road was available.</p>
+          <Button onClick={unsetRoad} sx={{ color: '#EEEEEE', textDecoration: 'underline' }}>Click here to go to the homepage.</Button>
         </div>
     </Box>
   );
