@@ -12,7 +12,7 @@ import {
 } from '../types/RoadData';
 
 // eslint-disable-next-line max-len
-export default async function buildSection(section: APIJunctionSection, apiEventData: APIEvent[], apiCCTVData: APICCTV[], apiVMSData: APIVMSGroup[]) {
+export default async function buildSection(section: APIJunctionSection, apiEventData: APIEvent[], apiCCTVData: APICCTV[], apiVMSData: APIVMSGroup[], direction: 'PRIMARY' | 'SECONDARY') {
     /* eslint-disable max-len */
     const sectionData: Section = {
         interface: 'SECTION',
@@ -33,7 +33,8 @@ export default async function buildSection(section: APIJunctionSection, apiEvent
         processVMS(apiVMSData as APIVMSGroup[], sectionData.payload.subsections),
     ]) as [Event[], CCTV[], VMSGroup[]];
 
-    sectionData.payload.data = buildSectionData(sectionData.payload.subsections, promises[0], promises[1], promises[2], 'PRIMARY');
+    // eslint-disable-next-line max-len
+    sectionData.payload.data = buildSectionData(sectionData.payload.subsections, promises[0], promises[1], promises[2], direction);
 
     return sectionData;
 }

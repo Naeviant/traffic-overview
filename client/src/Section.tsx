@@ -52,6 +52,7 @@ function Section(props: SectionProps) {
             >
                 <SectionData
                     data={secondaryDirectionSection}
+                    reverse
                 />
             </Grid>
         </>

@@ -49,6 +49,7 @@ export default async function buildRoads(roads: string[], sections: APIRoads, ap
                     apiData[0] as APIEvent[],
                     apiData[1] as APICCTV[],
                     apiData[2] as APIVMSGroup[],
+                    'PRIMARY',
                 ));
             }
 
@@ -58,6 +59,7 @@ export default async function buildRoads(roads: string[], sections: APIRoads, ap
                     apiData[0] as APIEvent[],
                     apiData[1] as APICCTV[],
                     apiData[2] as APIVMSGroup[],
+                    'SECONDARY',
                 ));
             }
         }

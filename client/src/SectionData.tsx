@@ -9,10 +9,11 @@ import VMS from './VMS';
 
 interface SectionDataProps {
     data: any;
+    reverse?: boolean;
 }
 
 function SectionData(props: SectionDataProps) {
-    const { data } = props;
+    const { data, reverse } = props;
 
     const showSpeeds = useSelector((state: any) => state.showSpeeds);
     const showDistances = useSelector((state: any) => state.showDistances);
@@ -20,6 +21,8 @@ function SectionData(props: SectionDataProps) {
     const showVMS = useSelector((state: any) => state.showVMS);
     const showIncidents = useSelector((state: any) => state.showIncidents);
     const showRoadworks = useSelector((state: any) => state.showRoadworks);
+
+    const sectionData = !reverse ? data.data : [...data.data].reverse();
 
     return (
         <>
@@ -34,7 +37,7 @@ function SectionData(props: SectionDataProps) {
                     : null
             }
             {
-                [...data.data].reverse().map((info: any) => (
+                [...sectionData].reverse().map((info: any) => (
                     info.interface === 'CCTV' && showCCTV
                         ? (
                             <CCTV
