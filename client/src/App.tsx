@@ -86,6 +86,8 @@ function App() {
       });
     }
   });
+
+  console.log(data);
   
   return (
     <div className="App">
@@ -168,7 +170,7 @@ function App() {
             {
               loading
               ? <Loading />
-              : data !== null && data.timestamp
+              : data !== null && data.dataTimestamp
                 ?
                   <Grid container>
                     <Grid item p={2} lg={2} xl={2} sx={{ display: { xs: 'none', sm: 'none', md: 'none', lg: 'block', xl: 'block' }, position: 'fixed', top: 0, bottom: 0 }}>
