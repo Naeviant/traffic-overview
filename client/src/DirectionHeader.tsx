@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import {
   Paper,
   Typography
@@ -9,11 +10,12 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 interface DirectionHeaderProps {
     primary: boolean;
     direction: string;
-    colour: string;
 }
 
 function DirectionHeader(props: DirectionHeaderProps) {
-    const { primary, direction, colour } = props;
+    const { primary, direction } = props;
+
+    const colour = useSelector((state: any) => state.road.colour);
 
     return (
         <Paper sx={{ 

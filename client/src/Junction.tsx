@@ -5,7 +5,6 @@ import JunctionHeader from './JunctionHeader';
 
 interface JunctionProps {
     refs: any;
-    colour: string;
     junctionName: string;
     primaryDestination: string;
     secondaryDestination: string;
@@ -14,7 +13,6 @@ interface JunctionProps {
 function Junction(props: JunctionProps) {
     const {
         refs,
-        colour,
         junctionName,
         primaryDestination,
         secondaryDestination
@@ -23,13 +21,13 @@ function Junction(props: JunctionProps) {
     return (
         <>
             <Grid item xs={6} sm={5}>
-                <JunctionHeader text={ primaryDestination } colour={colour} />
+                <JunctionHeader text={ primaryDestination } />
             </Grid>
             <Grid item xs={2} sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}>
-                <JunctionHeader refs={(element: any) => refs.current.push(element)} text={ junctionName } arrows colour={colour} />
+                <JunctionHeader refs={(element: any) => refs.current.push(element)} text={ junctionName } arrows />
             </Grid>
             <Grid item xs={6} sm={5}>
-                <JunctionHeader text={ secondaryDestination } colour={colour} />
+                <JunctionHeader text={ secondaryDestination } />
             </Grid>
         </>
     )

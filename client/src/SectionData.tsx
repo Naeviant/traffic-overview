@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 import AverageSpeed from './AverageSpeed';
 import Distance from './Distance';
@@ -8,24 +9,17 @@ import VMS from './VMS';
 
 interface SectionDataProps {
     data: any;
-    showSpeeds: boolean;
-    showDistances: boolean;
-    showCCTV: boolean;
-    showVMS: boolean;
-    showIncidents: boolean;
-    showRoadworks: boolean;
 }
 
 function SectionData(props: SectionDataProps) {
-    const { 
-        data,
-        showSpeeds,
-        showDistances,
-        showCCTV,
-        showVMS,
-        showIncidents,
-        showRoadworks
-    } = props;
+    const { data } = props;
+
+    const showSpeeds = useSelector((state: any) => state.showSpeeds); 
+    const showDistances = useSelector((state: any) => state.showDistances); 
+    const showCCTV = useSelector((state: any) => state.showCCTV); 
+    const showVMS = useSelector((state: any) => state.showVMS); 
+    const showIncidents = useSelector((state: any) => state.showIncidents); 
+    const showRoadworks = useSelector((state: any) => state.showRoadworks); 
 
     return (
         <>

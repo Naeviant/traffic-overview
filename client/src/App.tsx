@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import axios, { AxiosResponse } from 'axios';
 import {
   Box,
@@ -14,34 +15,18 @@ import MobileTopBar from './MobileTopBar';
 import MobileSidebarBar from './MobileSideBar';
 import RoadData from './RoadData';
 
+import { set as setRoads } from './state/roads';
+
 function App() {
-  const [road, setRoad] = useState<(string)>("");
-  const [roads, setRoads] = useState<string[]>([]);
+  const dispatch = useDispatch();
+
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [colour, setColour] = useState<string>('blue');
-  const [showSpeeds, setShowSpeeds] = useState<boolean>(true);
-  const [showDistances, setShowDistances] = useState<boolean>(true);
-  const [showCCTV, setShowCCTV] = useState<boolean>(true);
-  const [showVMS, setShowVMS] = useState<boolean>(true);
-  const [showIncidents, setShowIncidents] = useState<boolean>(true);
-  const [showRoadworks, setShowRoadworks] = useState<boolean>(true);
-  const [showSidebar, setShowSidebar] = useState<boolean>(false);
+  
+  const road = useSelector((state: any) => state.road.name);
+  const roads = useSelector((state: any) => state.roads);
 
   const refs = useRef<any>([]);
-
-  const roadChange = (newRoad: string) => {
-    setRoad(newRoad);
-    if (newRoad.slice(0, 1) === 'M' || newRoad.slice(newRoad.length - 3) === '(M)') {
-      setColour('blue');
-    } else {
-      setColour('green');
-    }
-  };
-
-  const unsetRoad = () => {
-    setRoad("");
-  }
 
   const refresh = () => {
     setLoading(true);
@@ -59,7 +44,7 @@ function App() {
   useEffect(() => {
     if (roads.length === 0) {
       axios.get(`${process.env.REACT_APP_API_BASE}roads`).then((resp: AxiosResponse) => {
-        setRoads(resp.data.data);
+        dispatch(setRoads(resp.data.data));
       });
     } 
     if ((!data && road) || (data && road && road !== data.road)) {
@@ -74,7 +59,7 @@ function App() {
         setLoading(false);
       });
     }
-  }, [roads.length, data, road]);
+  }, [roads.length, data, road, dispatch]);
   
   return (
     <div className="App">
@@ -82,36 +67,13 @@ function App() {
         road
         ? <>
             <MobileSidebarBar
-              showSidebar={showSidebar}
-              setShowSidebar={setShowSidebar}
-              road={road}
-              roads={roads}
-              setRoad={roadChange}
-              unsetRoad={unsetRoad}
               refresh={refresh}
               dataTimestamp={data && data.timestamp ? data.dataTimestamp : 0}
-              currentSpeedsState={showSpeeds}
-              currentDistancesState={showDistances}
-              currentCCTVState={showCCTV}
-              currentVMSState={showVMS}
-              currentIncidentsState={showIncidents}
-              currentRoadworksState={showRoadworks}
-              toggleSpeeds={setShowSpeeds}
-              toggleDistances={setShowDistances}
-              toggleCCTV={setShowCCTV}
-              toggleVMS={setShowVMS}
-              toggleIncidents={setShowIncidents}
-              toggleRoadworks={setShowRoadworks}
             />
             <Box sx={{
               backgroundColor: "#222222"
             }}>
-              <MobileTopBar
-                road={road}
-                roads={roads}
-                setRoad={roadChange}
-                setShowSidebar={setShowSidebar}
-              />
+              <MobileTopBar />
               {
                 loading
                 ? <Loading />
@@ -120,25 +82,8 @@ function App() {
                     <Grid container>
                       <Grid item p={2} lg={2} xl={2} sx={{ display: { xs: 'none', sm: 'none', md: 'none', lg: 'block', xl: 'block' }, position: 'fixed', top: 0, bottom: 0 }}>
                         <MenuContent
-                          road={road}
-                          roads={roads}
-                          setRoad={roadChange}
-                          unsetRoad={unsetRoad}
                           refresh={refresh}
                           dataTimestamp={data && data.timestamp ? data.dataTimestamp : 0}
-                          toggleSidebar={setShowSidebar}
-                          currentSpeedsState={showSpeeds}
-                          currentDistancesState={showDistances}
-                          currentCCTVState={showCCTV}
-                          currentVMSState={showVMS}
-                          currentIncidentsState={showIncidents}
-                          currentRoadworksState={showRoadworks}
-                          toggleSpeeds={setShowSpeeds}
-                          toggleDistances={setShowDistances}
-                          toggleCCTV={setShowCCTV}
-                          toggleVMS={setShowVMS}
-                          toggleIncidents={setShowIncidents}
-                          toggleRoadworks={setShowRoadworks}
                         />
                         <JunctionJumpList
                           roadSections={data.primaryDirectionSections}
@@ -151,32 +96,21 @@ function App() {
                         <RoadData 
                           primaryDirectionSections={data.primaryDirectionSections}
                           secondaryDirectionSections={data.secondaryDirectionSections}
-                          colour={colour}
                           roadName={data.road}
                           circularRoad={data.circularRoad}
                           primaryDirection={data.primaryDirection}
                           secondaryDirection={data.secondaryDirection}
                           refs={refs}
-                          showSpeeds={showSpeeds}
-                          showDistances={showDistances}
-                          showCCTV={showCCTV}
-                          showVMS={showVMS}
-                          showIncidents={showIncidents}
-                          showRoadworks={showRoadworks}
                         />
                       </Grid>
                     </Grid>
                   : 
-                    <NotFound unsetRoad={unsetRoad} />
+                    <NotFound />
               }
             </Box>
           </>
         :
-          <Home 
-            road={road}
-            roads={roads}
-            setRoad={roadChange}
-          />
+          <Home />
       }
     </div>
   );

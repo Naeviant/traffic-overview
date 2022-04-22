@@ -1,12 +1,11 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { Box, Button } from '@mui/material';
 
-interface NotFoundProps {
-  unsetRoad(e: any): void;
-}
+import { unset as unsetRoad } from './state/road';
 
-function NotFound(props: NotFoundProps) {
-  const { unsetRoad } = props;
+function NotFound() {
+  const dispatch = useDispatch();
 
   return (
     <Box sx={{
@@ -20,7 +19,7 @@ function NotFound(props: NotFoundProps) {
         <div>
           <h1 style={{ fontSize: '4rem' }}>Data Unavailable</h1>
           <p>No further information about this road was available.</p>
-          <Button onClick={unsetRoad} sx={{ color: '#EEEEEE', textDecoration: 'underline' }}>Click here to go to the homepage.</Button>
+          <Button onClick={() => dispatch(unsetRoad())} sx={{ color: '#EEEEEE', textDecoration: 'underline' }}>Click here to go to the homepage.</Button>
         </div>
     </Box>
   );

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux'
 import {
     Autocomplete,
     Box,
@@ -7,15 +8,19 @@ import {
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 
+import { set as setRoad } from './state/road';
+
 interface RoadSelectorProps {
     width: string;
-    road: string;
-    roads: string[];
-    setRoad: (e: any) => void;
 }
 
 function RoadSelector(props: RoadSelectorProps) {
-    const { width, road, roads, setRoad } = props;
+    const dispatch = useDispatch();
+
+    const { width } = props;
+
+    const road = useSelector((state: any) => state.road.name);
+    const roads = useSelector((state: any) => state.roads);
 
     return (
         <Box sx={{
@@ -31,7 +36,7 @@ function RoadSelector(props: RoadSelectorProps) {
                 PaperComponent={(props) => <Paper {...props} sx={{ backgroundColor: '#111111' }} />}
                 ListboxProps={{ style: { maxHeight: '200px' }}}
                 value={road}
-                onChange={(e, value) => { if (value) setRoad(value) }}
+                onChange={(e, value) => { if (value) dispatch(setRoad(value)) }}
                 renderOption={(props, option) => {
                     return (
                         <span {...props} style={{ 

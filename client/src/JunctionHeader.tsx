@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import {
   Paper,
   Typography
@@ -10,11 +11,12 @@ interface JunctionHeaderProps {
     refs?: any;
     text: string;
     arrows?: boolean;
-    colour: string;
 }
 
 function JunctionHeader(props: JunctionHeaderProps) {
-    const { refs, text, arrows, colour } = props;
+    const { refs, text, arrows } = props;
+
+    const colour = useSelector((state: any) => state.road.colour);
 
     return (
         <div ref={refs}>

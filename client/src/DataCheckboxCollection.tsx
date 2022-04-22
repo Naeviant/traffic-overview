@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import {
     Box,
     FormGroup,
@@ -6,36 +7,20 @@ import {
 
 import DataCheckbox from './DataCheckbox';
 
-interface DataCheckboxCollectionProps {
-    currentSpeedsState: boolean;
-    currentDistancesState: boolean;
-    currentCCTVState: boolean;
-    currentVMSState: boolean;
-    currentIncidentsState: boolean;
-    currentRoadworksState: boolean;
-    toggleSpeeds(newState: boolean): void;
-    toggleDistances(newState: boolean): void;
-    toggleCCTV(newState: boolean): void;
-    toggleVMS(newState: boolean): void;
-    toggleIncidents(newState: boolean): void;
-    toggleRoadworks(newState: boolean): void;
-}
+import { toggle as toggleSpeeds } from './state/showSpeeds';
+import { toggle as toggleDistances } from './state/showDistances';
+import { toggle as toggleCCTV } from './state/showCCTV';
+import { toggle as toggleVMS } from './state/showVMS';
+import { toggle as toggleIncidents } from './state/showIncidents';
+import { toggle as toggleRoadworks } from './state/showRoadworks';
 
-function DataCheckboxCollection(props: DataCheckboxCollectionProps) {
-    const {
-        currentSpeedsState,
-        currentDistancesState,
-        currentCCTVState,
-        currentVMSState,
-        currentIncidentsState,
-        currentRoadworksState,
-        toggleSpeeds,
-        toggleDistances,
-        toggleCCTV,
-        toggleVMS,
-        toggleIncidents,
-        toggleRoadworks
-    } = props;
+function DataCheckboxCollection() {
+    const showSpeeds = useSelector((state: any) => state.showSpeeds); 
+    const showDistances = useSelector((state: any) => state.showDistances); 
+    const showCCTV = useSelector((state: any) => state.showCCTV); 
+    const showVMS = useSelector((state: any) => state.showVMS); 
+    const showIncidents = useSelector((state: any) => state.showIncidents); 
+    const showRoadworks = useSelector((state: any) => state.showRoadworks); 
 
     return (
         <Box
@@ -48,32 +33,32 @@ function DataCheckboxCollection(props: DataCheckboxCollectionProps) {
         >
             <FormGroup>
                 <DataCheckbox 
-                    currentState={currentSpeedsState}
+                    currentState={showSpeeds}
                     toggleState={toggleSpeeds} 
                     label="Show Speeds" 
                 />
                 <DataCheckbox 
-                    currentState={currentDistancesState}
+                    currentState={showDistances}
                     toggleState={toggleDistances} 
                     label="Show Distances" 
                 />
                 <DataCheckbox 
-                    currentState={currentCCTVState}
+                    currentState={showCCTV}
                     toggleState={toggleCCTV} 
                     label="Show CCTV" 
                 />
                 <DataCheckbox 
-                    currentState={currentVMSState}
+                    currentState={showVMS}
                     toggleState={toggleVMS} 
                     label="Show VMS" 
                 />
                 <DataCheckbox 
-                    currentState={currentIncidentsState}
+                    currentState={showIncidents}
                     toggleState={toggleIncidents} 
                     label="Show Incidents" 
                 />
                 <DataCheckbox 
-                    currentState={currentRoadworksState}
+                    currentState={showRoadworks}
                     toggleState={toggleRoadworks} 
                     label="Show Roadworks" 
                 />

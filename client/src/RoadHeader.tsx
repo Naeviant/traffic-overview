@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import {
   Paper,
   Typography
@@ -7,11 +8,12 @@ import {
 interface RoadHeaderProps {
     road: string;
     ringRoad: boolean;
-    colour: string;
 }
 
 function RoadHeader(props: RoadHeaderProps) {
-    const { road, ringRoad, colour } = props;
+    const { road, ringRoad } = props;
+
+    const colour = useSelector((state: any) => state.road.colour);
 
     return (
         <Paper sx={{ 

@@ -6,24 +6,12 @@ import SectionData from './SectionData';
 interface SectionProps {
     primaryDirectionSection: any;
     secondaryDirectionSection: any;
-    showSpeeds: boolean;
-    showDistances: boolean;
-    showCCTV: boolean;
-    showVMS: boolean;
-    showIncidents: boolean;
-    showRoadworks: boolean;
 }
 
 function Section(props: SectionProps) {
     const { 
         primaryDirectionSection,
-        secondaryDirectionSection,
-        showSpeeds,
-        showDistances,
-        showCCTV,
-        showVMS,
-        showIncidents,
-        showRoadworks
+        secondaryDirectionSection
     } = props;
 
     return (
@@ -35,12 +23,6 @@ function Section(props: SectionProps) {
             }}>
                 <SectionData 
                     data={primaryDirectionSection}
-                    showSpeeds={showSpeeds}
-                    showDistances={showDistances}
-                    showCCTV={showCCTV}
-                    showVMS={showVMS}
-                    showIncidents={showIncidents}
-                    showRoadworks={showRoadworks}
                 />
             </Grid>
             <Grid item sm={2} sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}></Grid>
@@ -51,12 +33,6 @@ function Section(props: SectionProps) {
             }}>
                 <SectionData 
                     data={secondaryDirectionSection}
-                    showSpeeds={showSpeeds}
-                    showDistances={showDistances}
-                    showCCTV={showCCTV}
-                    showVMS={showVMS}
-                    showIncidents={showIncidents}
-                    showRoadworks={showRoadworks}
                 />
             </Grid>
         </>

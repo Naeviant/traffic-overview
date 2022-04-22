@@ -1,22 +1,15 @@
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Box, Button } from '@mui/material';
 
 import RoadSelector from './RoadSelector';
 
-interface MobileTopBarProps {
-    road: string;
-    roads: string[];
-    setRoad(road: string): void;
-    setShowSidebar(state: boolean): void;
-}
+import { show as showSidebar } from './state/showSidebar';
 
-function MobileTopBar(props: MobileTopBarProps) {
-    const {
-        road,
-        roads,
-        setRoad,
-        setShowSidebar
-    } = props;
+function MobileTopBar() {
+    const dispatch = useDispatch();
+
+    const colour = useSelector((state: any) => state.road.colour);
 
     return (
         <Box sx={{
@@ -25,8 +18,17 @@ function MobileTopBar(props: MobileTopBarProps) {
             paddingTop: '16px',
             paddingBottom: '16px',
         }}>
-            <Button variant="contained" onClick={ () => setShowSidebar(true) } sx={{ marginRight: '16px' }}>Menu</Button>
-            <RoadSelector width="calc(100% - 112px)" road={ road } roads={ roads } setRoad={ setRoad } />
+            <Button 
+                variant="contained" 
+                onClick={ () => dispatch(showSidebar()) } 
+                sx={{ 
+                    backgroundColor: colour === 'blue' ? '#01579b' : '#1b5e20', 
+                    marginRight: '16px'
+                }}
+            >
+                Menu
+            </Button>
+            <RoadSelector width="calc(100% - 112px)" />
         </Box>
     )
 }

@@ -6,15 +6,7 @@ import {
 
 import RoadSelector from './RoadSelector';
 
-interface HomeProps {
-    road: string;
-    roads: string[];
-    setRoad(road: string): void;
-}
-
-function Home(props: HomeProps) {
-    const { road, roads, setRoad } = props;
-
+function Home() {
     return (
         <Box sx={{ 
             backgroundImage: "url('/images/landing-bg.jpg')",
@@ -43,7 +35,7 @@ function Home(props: HomeProps) {
                     display: "flex",
                     justifyContent: "center"
                 }}>
-                    <RoadSelector width="600px" road={ road } roads={ roads } setRoad={ setRoad } />
+                    <RoadSelector width="600px" />
                 </Box>
             </Box>
         </Box>
