@@ -22,7 +22,7 @@ function MenuContent(props: MenuContentProps) {
 
     const {
         refresh,
-        dataTimestamp
+        dataTimestamp,
     } = props;
 
     const colour = useSelector((state: any) => state.road.colour);
@@ -31,30 +31,30 @@ function MenuContent(props: MenuContentProps) {
         <>
             <Grid container spacing={2}>
                 <Grid item xs={6}>
-                    <Button 
-                        variant="contained" 
-                        fullWidth 
-                        onClick={ () => { dispatch(unsetRoad()); hideSidebar(); } } 
-                        sx={{ 
-                            backgroundColor: colour === 'blue' ? '#01579b' : '#1b5e20', 
-                            paddingTop: '16px', 
-                            paddingBottom: '16px', 
-                            marginBottom: '16px'
+                    <Button
+                        variant="contained"
+                        fullWidth
+                        onClick={() => { dispatch(unsetRoad()); hideSidebar(); }}
+                        sx={{
+                            backgroundColor: colour === 'blue' ? '#01579b' : '#1b5e20',
+                            paddingTop: '16px',
+                            paddingBottom: '16px',
+                            marginBottom: '16px',
                         }}
                     >
                         Home
                     </Button>
                 </Grid>
                 <Grid item xs={6}>
-                    <Button 
-                        variant="contained" 
-                        fullWidth 
-                        onClick={ () => { refresh(); hideSidebar(); } } 
-                        sx={{ 
-                            backgroundColor: colour === 'blue' ? '#01579b' : '#1b5e20', 
-                            paddingTop: '16px', 
-                            paddingBottom: '16px', 
-                            marginBottom: '16px'
+                    <Button
+                        variant="contained"
+                        fullWidth
+                        onClick={() => { refresh(); hideSidebar(); }}
+                        sx={{
+                            backgroundColor: colour === 'blue' ? '#01579b' : '#1b5e20',
+                            paddingTop: '16px',
+                            paddingBottom: '16px',
+                            marginBottom: '16px',
                         }}
                     >
                         Refresh

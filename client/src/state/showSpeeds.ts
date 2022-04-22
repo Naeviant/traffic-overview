@@ -4,10 +4,8 @@ export const showSpeedsSlice = createSlice({
     name: 'showSpeeds',
     initialState: true,
     reducers: {
-        toggle: (state) => {
-            return !state;
-        }
-    }
+        toggle: (state) => !state,
+    },
 });
 
 export const { toggle } = showSpeedsSlice.actions;

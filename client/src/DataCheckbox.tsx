@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch } from 'react-redux'; 
+import { useDispatch } from 'react-redux';
 import {
     Checkbox,
     FormControlLabel,
@@ -17,13 +17,14 @@ function DataCheckbox(props: DataCheckboxProps) {
     const { currentState, toggleState, label } = props;
 
     return (
-        <FormControlLabel 
-            control={
+        <FormControlLabel
+            control={(
                 <Checkbox
-                    checked={currentState} 
-                    onChange={() => dispatch(toggleState())} 
-                    sx={{ color: "#AAAAAA" }}
-                />} 
+                    checked={currentState}
+                    onChange={() => dispatch(toggleState())}
+                    sx={{ color: '#AAAAAA' }}
+                />
+            )}
             label={label}
         />
     );

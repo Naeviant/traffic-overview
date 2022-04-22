@@ -16,7 +16,7 @@ function MobileSidebarBar(props: MobileSidebarBarProps) {
 
     const {
         refresh,
-        dataTimestamp
+        dataTimestamp,
     } = props;
 
     const sidebarVisibility = useSelector((state: any) => state.showSidebar);

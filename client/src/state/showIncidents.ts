@@ -4,10 +4,8 @@ export const showIncidentsSlice = createSlice({
     name: 'showIncidents',
     initialState: true,
     reducers: {
-        toggle: (state) => {
-            return !state;
-        }
-    }
+        toggle: (state) => !state,
+    },
 });
 
 export const { toggle } = showIncidentsSlice.actions;

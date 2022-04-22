@@ -23,12 +23,12 @@ function RoadData(props: RoadDataProps) {
         circularRoad,
         primaryDirection,
         secondaryDirection,
-        refs
+        refs,
     } = props;
 
     return (
         <Grid container spacing={1}>
-            <Headers 
+            <Headers
                 roadName={roadName}
                 circularRoad={circularRoad}
                 primaryDirection={primaryDirection}
@@ -36,21 +36,25 @@ function RoadData(props: RoadDataProps) {
             />
             {
                 [...primaryDirectionSections].reverse().map((section: any, index: number) => (
-                    section.interface === "JUNCTION"
-                    ?
-                        <Junction
-                            key={index}
-                            refs={refs}
-                            junctionName={section.payload.name}
-                            primaryDestination={section.payload.destination}
-                            secondaryDestination={secondaryDirectionSections[secondaryDirectionSections.length - 1 - index].payload.destination}
-                        />
-                    : 
-                        <Section 
-                            key={index} 
-                            primaryDirectionSection={section.payload} 
-                            secondaryDirectionSection={secondaryDirectionSections[secondaryDirectionSections.length - 1 - index].payload}
-                        />
+                    section.interface === 'JUNCTION'
+                        ? (
+                            <Junction
+                                key={index}
+                                refs={refs}
+                                junctionName={section.payload.name}
+                                primaryDestination={section.payload.destination}
+                                // eslint-disable-next-line max-len
+                                secondaryDestination={secondaryDirectionSections[secondaryDirectionSections.length - 1 - index].payload.destination}
+                            />
+                        )
+                        : (
+                            <Section
+                                key={index}
+                                primaryDirectionSection={section.payload}
+                                // eslint-disable-next-line max-len
+                                secondaryDirectionSection={secondaryDirectionSections[secondaryDirectionSections.length - 1 - index].payload}
+                            />
+                        )
                 ))
             }
         </Grid>

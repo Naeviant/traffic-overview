@@ -13,24 +13,27 @@ function MobileTopBar() {
 
     return (
         <Box sx={{
-            display: { xs: 'flex', sm: 'flex', md: 'flex', lg: 'none', xl: 'none' },
-            justifyContent: "center",
+            display: {
+                xs: 'flex', sm: 'flex', md: 'flex', lg: 'none', xl: 'none',
+            },
+            justifyContent: 'center',
             paddingTop: '16px',
             paddingBottom: '16px',
-        }}>
-            <Button 
-                variant="contained" 
-                onClick={ () => dispatch(showSidebar()) } 
-                sx={{ 
-                    backgroundColor: colour === 'blue' ? '#01579b' : '#1b5e20', 
-                    marginRight: '16px'
+        }}
+        >
+            <Button
+                variant="contained"
+                onClick={() => dispatch(showSidebar())}
+                sx={{
+                    backgroundColor: colour === 'blue' ? '#01579b' : '#1b5e20',
+                    marginRight: '16px',
                 }}
             >
                 Menu
             </Button>
             <RoadSelector width="calc(100% - 112px)" />
         </Box>
-    )
+    );
 }
 
 export default MobileTopBar;

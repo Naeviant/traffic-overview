@@ -11,17 +11,19 @@ function DataFetchedTimestamp(props: DataFetchedTimestampProps) {
     if (!timestamp) {
         return null;
     }
-    
-    const formattedDateTime = (new Date(timestamp).toISOString().match(/(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})/) ?? ['', '', ''])[2]
+
+    const formattedDateTime = (new Date(timestamp).toISOString().match(/(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})/) ?? ['', '', ''])[2];
 
     return (
-        <Typography 
-            variant="caption" 
-            align="center" 
-            component="p" 
+        <Typography
+            variant="caption"
+            align="center"
+            component="p"
             sx={{ color: '#EEEEEE' }}
         >
-            Data Fetched At: { formattedDateTime }
+            Data Fetched At:
+            {' '}
+            { formattedDateTime }
         </Typography>
     );
 }

@@ -19,6 +19,6 @@ export default configureStore({
         showRoadworks,
         showSpeeds,
         showSidebar,
-        showVMS
+        showVMS,
     },
 });

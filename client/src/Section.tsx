@@ -9,29 +9,47 @@ interface SectionProps {
 }
 
 function Section(props: SectionProps) {
-    const { 
+    const {
         primaryDirectionSection,
-        secondaryDirectionSection
+        secondaryDirectionSection,
     } = props;
 
     return (
         <>
-            <Grid item xs={6} sm={5} sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center'
-            }}>
-                <SectionData 
+            <Grid
+                item
+                xs={6}
+                sm={5}
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                }}
+            >
+                <SectionData
                     data={primaryDirectionSection}
                 />
             </Grid>
-            <Grid item sm={2} sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}></Grid>
-            <Grid item xs={6} sm={5} sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center'
-            }}>
-                <SectionData 
+            <Grid
+                item
+                sm={2}
+                sx={{
+                    display: {
+                        xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block',
+                    },
+                }}
+            />
+            <Grid
+                item
+                xs={6}
+                sm={5}
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                }}
+            >
+                <SectionData
                     data={secondaryDirectionSection}
                 />
             </Grid>

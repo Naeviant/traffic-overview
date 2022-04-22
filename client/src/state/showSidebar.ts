@@ -4,13 +4,11 @@ export const showSidebarSlice = createSlice({
     name: 'showSidebar',
     initialState: false,
     reducers: {
-        show: (state) => {
-            return true;
-        },
-        hide: (state) => {
-            return false;
-        }
-    }
+        // eslint-disable-next-line no-unused-vars
+        show: (state) => true,
+        // eslint-disable-next-line no-unused-vars
+        hide: (state) => false,
+    },
 });
 
 export const { show, hide } = showSidebarSlice.actions;

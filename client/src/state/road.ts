@@ -4,7 +4,7 @@ export const roadSlice = createSlice({
     name: 'road',
     initialState: {
         name: '',
-        colour: 'blue'
+        colour: 'blue',
     },
     reducers: {
         set: (state, action) => {
@@ -14,23 +14,21 @@ export const roadSlice = createSlice({
                 return {
                     ...state,
                     name: newRoad,
-                    colour: 'blue'
-                }
-            } else {
-                return {
-                    ...state,
-                    name: newRoad,
-                    colour: 'green'
-                }
+                    colour: 'blue',
+                };
             }
-        },
-        unset: (state) => {
             return {
-                name: '',
-                colour: 'blue'
+                ...state,
+                name: newRoad,
+                colour: 'green',
             };
-        }
-    }
+        },
+        // eslint-disable-next-line no-unused-vars
+        unset: (state) => ({
+            name: '',
+            colour: 'blue',
+        }),
+    },
 });
 
 export const { set, unset } = roadSlice.actions;

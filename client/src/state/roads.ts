@@ -4,10 +4,9 @@ export const roadsSlice = createSlice({
     name: 'roads',
     initialState: [] as string[],
     reducers: {
-        set: (state, action) => {
-            return action.payload;
-        }
-    }
+        // eslint-disable-next-lint no-unused-vars
+        set: (state, action) => action.payload,
+    },
 });
 
 export const { set } = roadsSlice.actions;

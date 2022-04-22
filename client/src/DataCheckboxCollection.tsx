@@ -15,12 +15,12 @@ import { toggle as toggleIncidents } from './state/showIncidents';
 import { toggle as toggleRoadworks } from './state/showRoadworks';
 
 function DataCheckboxCollection() {
-    const showSpeeds = useSelector((state: any) => state.showSpeeds); 
-    const showDistances = useSelector((state: any) => state.showDistances); 
-    const showCCTV = useSelector((state: any) => state.showCCTV); 
-    const showVMS = useSelector((state: any) => state.showVMS); 
-    const showIncidents = useSelector((state: any) => state.showIncidents); 
-    const showRoadworks = useSelector((state: any) => state.showRoadworks); 
+    const showSpeeds = useSelector((state: any) => state.showSpeeds);
+    const showDistances = useSelector((state: any) => state.showDistances);
+    const showCCTV = useSelector((state: any) => state.showCCTV);
+    const showVMS = useSelector((state: any) => state.showVMS);
+    const showIncidents = useSelector((state: any) => state.showIncidents);
+    const showRoadworks = useSelector((state: any) => state.showRoadworks);
 
     return (
         <Box
@@ -28,39 +28,39 @@ function DataCheckboxCollection() {
             p={2}
             sx={{
                 backgroundColor: '#111111',
-                color: '#AAAAAA'
+                color: '#AAAAAA',
             }}
         >
             <FormGroup>
-                <DataCheckbox 
+                <DataCheckbox
                     currentState={showSpeeds}
-                    toggleState={toggleSpeeds} 
-                    label="Show Speeds" 
+                    toggleState={toggleSpeeds}
+                    label="Show Speeds"
                 />
-                <DataCheckbox 
+                <DataCheckbox
                     currentState={showDistances}
-                    toggleState={toggleDistances} 
-                    label="Show Distances" 
+                    toggleState={toggleDistances}
+                    label="Show Distances"
                 />
-                <DataCheckbox 
+                <DataCheckbox
                     currentState={showCCTV}
-                    toggleState={toggleCCTV} 
-                    label="Show CCTV" 
+                    toggleState={toggleCCTV}
+                    label="Show CCTV"
                 />
-                <DataCheckbox 
+                <DataCheckbox
                     currentState={showVMS}
-                    toggleState={toggleVMS} 
-                    label="Show VMS" 
+                    toggleState={toggleVMS}
+                    label="Show VMS"
                 />
-                <DataCheckbox 
+                <DataCheckbox
                     currentState={showIncidents}
-                    toggleState={toggleIncidents} 
-                    label="Show Incidents" 
+                    toggleState={toggleIncidents}
+                    label="Show Incidents"
                 />
-                <DataCheckbox 
+                <DataCheckbox
                     currentState={showRoadworks}
-                    toggleState={toggleRoadworks} 
-                    label="Show Roadworks" 
+                    toggleState={toggleRoadworks}
+                    label="Show Roadworks"
                 />
             </FormGroup>
         </Box>

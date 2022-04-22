@@ -4,12 +4,13 @@ import {
     AccordionDetails,
     AccordionSummary,
     Button,
-    Typography
+    Typography,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 interface JunctionJumpListProps {
     roadSections: any[];
+    // eslint-disable-next-line no-unused-vars
     jumpFunction(index: number): void;
 }
 
@@ -17,39 +18,39 @@ function JunctionJumpList(props: JunctionJumpListProps) {
     const { roadSections, jumpFunction } = props;
 
     return (
-        <Accordion 
+        <Accordion
             disableGutters
             sx={{
                 maxHeight: 'calc(100% - 488px)',
                 borderRadius: '0 !important',
-                overflowY: 'auto'
+                overflowY: 'auto',
             }}
         >
             <AccordionSummary
                 expandIcon={<ExpandMoreIcon sx={{ color: '#AAAAAA' }} />}
                 sx={{
                     backgroundColor: '#111111',
-                    color: '#AAAAAA'
+                    color: '#AAAAAA',
                 }}
             >
                 <Typography>Jump to Junction</Typography>
             </AccordionSummary>
             <AccordionDetails
                 sx={{
-                    backgroundColor: '#111111'
+                    backgroundColor: '#111111',
                 }}
             >
                 {
-                    [...roadSections].reverse().filter((e: any) => { return e.interface === 'JUNCTION' }).map((section: any, index: number) => (
-                        <Button 
-                            key={index} 
-                            onClick={() => jumpFunction(index)} 
+                    [...roadSections].reverse().filter((e: any) => e.interface === 'JUNCTION').map((section: any, index: number) => (
+                        <Button
+                            key={index}
+                            onClick={() => jumpFunction(index)}
                             fullWidth
                             sx={{
-                            color: '#AAAAAA',
-                            '&:hover': {
-                                backgroundColor: 'transparent !important'
-                            }
+                                color: '#AAAAAA',
+                                '&:hover': {
+                                    backgroundColor: 'transparent !important',
+                                },
                             }}
                         >
                             { section.payload.name }
@@ -58,7 +59,7 @@ function JunctionJumpList(props: JunctionJumpListProps) {
                 }
             </AccordionDetails>
         </Accordion>
-    )
+    );
 }
 
 export default JunctionJumpList;

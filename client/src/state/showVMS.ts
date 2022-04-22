@@ -4,10 +4,8 @@ export const showVMSSlice = createSlice({
     name: 'showVMS',
     initialState: true,
     reducers: {
-        toggle: (state) => {
-            return !state;
-        }
-    }
+        toggle: (state) => !state,
+    },
 });
 
 export const { toggle } = showVMSSlice.actions;

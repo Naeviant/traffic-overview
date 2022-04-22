@@ -15,22 +15,34 @@ function Junction(props: JunctionProps) {
         refs,
         junctionName,
         primaryDestination,
-        secondaryDestination
+        secondaryDestination,
     } = props;
 
     return (
         <>
             <Grid item xs={6} sm={5}>
-                <JunctionHeader text={ primaryDestination } />
+                <JunctionHeader text={primaryDestination} />
             </Grid>
-            <Grid item xs={2} sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}>
-                <JunctionHeader refs={(element: any) => refs.current.push(element)} text={ junctionName } arrows />
+            <Grid
+                item
+                xs={2}
+                sx={{
+                    display: {
+                        xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block',
+                    },
+                }}
+            >
+                <JunctionHeader
+                    refs={(element: any) => refs.current.push(element)}
+                    text={junctionName}
+                    arrows
+                />
             </Grid>
             <Grid item xs={6} sm={5}>
-                <JunctionHeader text={ secondaryDestination } />
+                <JunctionHeader text={secondaryDestination} />
             </Grid>
         </>
-    )
+    );
 }
 
 export default Junction;

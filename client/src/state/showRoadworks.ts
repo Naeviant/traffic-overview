@@ -4,10 +4,8 @@ export const showRoadworksSlice = createSlice({
     name: 'showRoadworks',
     initialState: true,
     reducers: {
-        toggle: (state) => {
-            return !state;
-        }
-    }
+        toggle: (state) => !state,
+    },
 });
 
 export const { toggle } = showRoadworksSlice.actions;
