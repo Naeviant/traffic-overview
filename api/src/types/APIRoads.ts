@@ -18,7 +18,7 @@ export interface APIRoads {
     };
 }
 
-interface APIJunctionSection {
+export interface APIJunctionSection {
     id: number,
     order: number | null,
     direction: string | null,

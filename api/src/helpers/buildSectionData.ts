@@ -1,6 +1,6 @@
 import { CCTV, Event, VMSGroup } from "../types/RoadData";
 
-export default function build(subsections: number[], events: Event[], cctv: CCTV[], vms: VMSGroup[], direction: 'PRIMARY' | 'SECONDARY'): (Event | CCTV | VMSGroup)[] {
+export default function buildSectionData(subsections: number[], events: Event[], cctv: CCTV[], vms: VMSGroup[], direction: 'PRIMARY' | 'SECONDARY'): (Event | CCTV | VMSGroup)[] {
     const data: (Event | CCTV | VMSGroup)[] = [];
 
     for (const subsection of subsections) {
