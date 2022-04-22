@@ -9,12 +9,14 @@ import { APIRoads } from '../types/APIRoads';
 import { APIVMSGroup } from '../types/APIVMS';
 
 export default async function fetchRoadData(roads: string[]) {
-    if (process.env.API_STOP_FETCH && process.env.API_STOP_FETCH != 'FALSE') return;
+    if (process.env.API_STOP_FETCH && process.env.API_STOP_FETCH !== 'FALSE') return;
 
     archiveData(roads);
 
-    const sectionsReq: Promise<AxiosResponse>[] = roads.map((x: string) => { return axios.get(`https://www.trafficengland.com/api/network/getJunctionSections?roadName=${ x }`); });
+    const sectionsReq: Promise<AxiosResponse>[] = roads.map((x: string) => axios.get(`https://www.trafficengland.com/api/network/getJunctionSections?roadName=${x}`));
     const sectionsRes: AxiosResponse[] = await axios.all(sectionsReq);
+
+    // eslint-disable-next-line max-len
     const sections: APIRoads = Object.fromEntries(roads.map((x: string) => [x, sectionsRes[roads.indexOf(x)].data]));
 
     const dataReq: Promise<AxiosResponse>[] = [
@@ -26,8 +28,9 @@ export default async function fetchRoadData(roads: string[]) {
         ),
         axios.get(
             'https://www.trafficengland.com/api/vms/getToBounds?bbox=-5.7,56.0,1.65,50',
-        )
+        ),
     ];
+    // eslint-disable-next-line max-len
     const dataRes: (APIEvent[] | APICCTV[] | APIVMSGroup[])[] = (await axios.all(dataReq)).map((x: AxiosResponse) => x.data);
 
     await buildRoads(roads, sections, dataRes);
