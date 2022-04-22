@@ -1,12 +1,13 @@
 import React from 'react';
+
 import { Grid } from '@mui/material';
 
 import JunctionHeader from './JunctionHeader';
 
 interface JunctionProps {
-    refs: any;
     junctionName: string;
     primaryDestination: string;
+    refs: any;
     secondaryDestination: string;
 }
 

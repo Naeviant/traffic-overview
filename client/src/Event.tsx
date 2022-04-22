@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {
     Paper,
     Grid,
@@ -7,10 +8,10 @@ import {
 import WarningIcon from '@mui/icons-material/Warning';
 
 interface EventProps {
-    type: string;
+    lanes: { laneName: string, laneStatus: string }[];
     reason: string;
     severity: string;
-    lanes: { laneName: string, laneStatus: string }[];
+    type: string;
 }
 
 function Event(props: EventProps) {

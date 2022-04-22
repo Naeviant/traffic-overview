@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
+
 import {
     Checkbox,
     FormControlLabel,
@@ -7,8 +8,8 @@ import {
 
 interface DataCheckboxProps {
     currentState: boolean;
-    toggleState(): any;
     label: string;
+    toggleState(): any;
 }
 
 function DataCheckbox(props: DataCheckboxProps) {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+
 import {
     Paper,
     Typography,
@@ -8,9 +9,9 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
 interface JunctionHeaderProps {
+    arrows?: boolean;
     refs?: any;
     text: string;
-    arrows?: boolean;
 }
 
 function JunctionHeader(props: JunctionHeaderProps) {

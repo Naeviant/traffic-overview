@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+
 import {
     Button,
     Grid,
@@ -13,8 +14,8 @@ import { unset as unsetRoad } from './state/road';
 import { hide as hideSidebar } from './state/showSidebar';
 
 interface MenuContentProps {
-    refresh(): void;
     dataTimestamp: number;
+    refresh(): void;
 }
 
 function MenuContent(props: MenuContentProps) {

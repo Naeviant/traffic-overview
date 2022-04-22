@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {
     Accordion,
     AccordionDetails,
@@ -9,9 +10,9 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 interface JunctionJumpListProps {
-    roadSections: any[];
     // eslint-disable-next-line no-unused-vars
     jumpFunction(index: number): void;
+    roadSections: any[];
 }
 
 function JunctionJumpList(props: JunctionJumpListProps) {

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Grid } from '@mui/material';
 
 import Headers from './Headers';
@@ -6,13 +7,13 @@ import Junction from './Junction';
 import Section from './Section';
 
 interface RoadDataProps {
-    primaryDirectionSections: any[];
-    secondaryDirectionSections: any[];
-    roadName: string;
     circularRoad: boolean;
     primaryDirection: string;
-    secondaryDirection: string;
+    primaryDirectionSections: any[];
     refs: any;
+    roadName: string;
+    secondaryDirection: string;
+    secondaryDirectionSections: any[];
 }
 
 function RoadData(props: RoadDataProps) {

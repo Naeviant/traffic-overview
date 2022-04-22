@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {
     Box,
     Paper,
@@ -6,13 +7,14 @@ import {
 } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import PinDropIcon from '@mui/icons-material/PinDrop';
+
 import SIG from './SIG';
 
 interface VMSProps {
     lat: number;
     long: number;
-    vms: any;
     sig: any[];
+    vms: any;
 }
 
 function VMS(props: VMSProps) {

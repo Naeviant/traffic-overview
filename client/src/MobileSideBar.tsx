@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+
 import { SwipeableDrawer } from '@mui/material';
 
 import MenuContent from './MenuContent';
@@ -7,8 +8,8 @@ import MenuContent from './MenuContent';
 import { show as showSidebar, hide as hideSidebar } from './state/showSidebar';
 
 interface MobileSidebarBarProps {
-    refresh(): void;
     dataTimestamp: number;
+    refresh(): void;
 }
 
 function MobileSidebarBar(props: MobileSidebarBarProps) {

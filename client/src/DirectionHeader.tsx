@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+
 import {
     Paper,
     Typography,
@@ -8,8 +9,8 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
 interface DirectionHeaderProps {
-    primary: boolean;
     direction: string;
+    primary: boolean;
 }
 
 function DirectionHeader(props: DirectionHeaderProps) {

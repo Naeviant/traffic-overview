@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+
 import {
     Box,
     FormGroup,
@@ -7,20 +8,20 @@ import {
 
 import DataCheckbox from './DataCheckbox';
 
-import { toggle as toggleSpeeds } from './state/showSpeeds';
-import { toggle as toggleDistances } from './state/showDistances';
 import { toggle as toggleCCTV } from './state/showCCTV';
-import { toggle as toggleVMS } from './state/showVMS';
+import { toggle as toggleDistances } from './state/showDistances';
 import { toggle as toggleIncidents } from './state/showIncidents';
 import { toggle as toggleRoadworks } from './state/showRoadworks';
+import { toggle as toggleSpeeds } from './state/showSpeeds';
+import { toggle as toggleVMS } from './state/showVMS';
 
 function DataCheckboxCollection() {
-    const showSpeeds = useSelector((state: any) => state.showSpeeds);
-    const showDistances = useSelector((state: any) => state.showDistances);
     const showCCTV = useSelector((state: any) => state.showCCTV);
-    const showVMS = useSelector((state: any) => state.showVMS);
+    const showDistances = useSelector((state: any) => state.showDistances);
     const showIncidents = useSelector((state: any) => state.showIncidents);
     const showRoadworks = useSelector((state: any) => state.showRoadworks);
+    const showSpeeds = useSelector((state: any) => state.showSpeeds);
+    const showVMS = useSelector((state: any) => state.showVMS);
 
     return (
         <Box

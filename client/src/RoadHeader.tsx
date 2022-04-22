@@ -1,13 +1,14 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+
 import {
     Paper,
     Typography,
 } from '@mui/material';
 
 interface RoadHeaderProps {
-    road: string;
     ringRoad: boolean;
+    road: string;
 }
 
 function RoadHeader(props: RoadHeaderProps) {

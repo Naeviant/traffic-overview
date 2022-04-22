@@ -1,13 +1,14 @@
 import React from 'react';
+
 import { Grid } from '@mui/material';
 
 import DirectionHeader from './DirectionHeader';
 import RoadHeader from './RoadHeader';
 
 interface HeadersProps {
-    roadName: string;
     circularRoad: boolean;
     primaryDirection: string;
+    roadName: string;
     secondaryDirection: string;
 }
 

@@ -1,7 +1,8 @@
 import React from 'react';
+
 import {
-    Paper,
     Grid,
+    Paper,
     Typography,
 } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
@@ -9,10 +10,10 @@ import PinDropIcon from '@mui/icons-material/PinDrop';
 import VideocamIcon from '@mui/icons-material/Videocam';
 
 interface CCTVProps {
+    description: string;
+    image: string;
     lat: number;
     long: number;
-    image: string;
-    description: string;
 }
 
 function CCTV(props: CCTVProps) {
