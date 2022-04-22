@@ -298,6 +298,8 @@ app.get('/road/:road/historical/:timestamp', async (req: Request, res: Response)
     }
 });
 
+app.disable('etag');
+
 app.listen(PORT, () => {
     console.log(`Server Listening on Port ${PORT}`);
 });
