@@ -1,21 +1,24 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
+
 import {
-  Paper,
-  Typography
+    Paper,
+    Typography,
 } from '@mui/material';
 
 interface RoadHeaderProps {
-    road: string;
     ringRoad: boolean;
-    colour: string;
+    road: string;
 }
 
 function RoadHeader(props: RoadHeaderProps) {
-    const { road, ringRoad, colour } = props;
+    const { road, ringRoad } = props;
+
+    const colour = useSelector((state: any) => state.road.colour);
 
     return (
-        <Paper sx={{ 
-            backgroundColor: colour === 'blue' ? '#01579b' : '#1b5e20', 
+        <Paper sx={{
+            backgroundColor: colour === 'blue' ? '#01579b' : '#1b5e20',
             color: '#FFFFFF',
             padding: 2,
             margin: 1,
@@ -24,13 +27,14 @@ function RoadHeader(props: RoadHeaderProps) {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            alignItems: 'center'
-        }}>
+            alignItems: 'center',
+        }}
+        >
             <Typography align="center" variant="h3">{ road }</Typography>
             {
-                ringRoad 
-                ? <Typography variant="caption">Ring Road</Typography>
-                : <></>
+                ringRoad
+                    ? <Typography variant="caption">Ring Road</Typography>
+                    : null
             }
         </Paper>
     );

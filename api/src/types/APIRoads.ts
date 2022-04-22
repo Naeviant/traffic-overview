@@ -1,24 +1,4 @@
-export interface APIRoads {
-    [key: string]: {
-        [key: string]: {
-            junctionName: string;
-            roadName: string;
-            primaryDirection: string;
-            secondaryDirection: string;
-            primaryUpstreamJunctionSection: APIJunctionSection;
-            primaryDownstreamJunctionSection: APIJunctionSection;
-            secondaryUpstreamJunctionSection: APIJunctionSection;
-            secondaryDownstreamJunctionSection: APIJunctionSection;
-            primaryDirectionDescription: string;
-            secondaryDirectionDescription: string;
-            availableInPrimaryDirection: boolean;
-            availableInSecondaryDirection: boolean;
-            circularRoad: false;
-        }
-    };
-}
-
-interface APIJunctionSection {
+export interface APIJunctionSection {
     id: number,
     order: number | null,
     direction: string | null,
@@ -52,4 +32,24 @@ interface APIJunctionSection {
         longitude: unknown
     }[] | null,
     avgSpeed: number
+}
+
+export interface APIRoads {
+    [key: string]: {
+        [key: string]: {
+            junctionName: string;
+            roadName: string;
+            primaryDirection: string;
+            secondaryDirection: string;
+            primaryUpstreamJunctionSection: APIJunctionSection;
+            primaryDownstreamJunctionSection: APIJunctionSection;
+            secondaryUpstreamJunctionSection: APIJunctionSection;
+            secondaryDownstreamJunctionSection: APIJunctionSection;
+            primaryDirectionDescription: string;
+            secondaryDirectionDescription: string;
+            availableInPrimaryDirection: boolean;
+            availableInSecondaryDirection: boolean;
+            circularRoad: false;
+        }
+    };
 }

@@ -41,5 +41,5 @@ export interface APIEvent {
     awpFormatted: string[],
     additionalDescriptionFormatted: string[],
     junction_ds_desc: string,
-    junction_us_desc: string    
+    junction_us_desc: string
 }
