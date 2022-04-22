@@ -10,6 +10,7 @@ import {
   FormGroup,
   FormControlLabel,
   Grid,
+  SwipeableDrawer,
   Typography
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -38,6 +39,7 @@ function App() {
   const [showVMS, setShowVMS] = useState<boolean>(true);
   const [showIncidents, setShowIncidents] = useState<boolean>(true);
   const [showRoadworks, setShowRoadworks] = useState<boolean>(true);
+  const [showSidebar, setShowSidebar] = useState<boolean>(false);
 
   const refs = useRef<any>([]);
 
@@ -86,8 +88,6 @@ function App() {
       });
     }
   });
-
-  console.log(data);
   
   return (
     <div className="App">
@@ -126,226 +126,238 @@ function App() {
             </Box>
           </Box>
         :
-          <Box sx={{
-            backgroundColor: "#222222"
-          }}>
-            <Box sx={{
-              display: { xs: 'flex', sm: 'flex', md: 'flex', lg: 'none', xl: 'none' },
-              justifyContent: "center",
-              paddingTop: '16px',
-              paddingBottom: '16px',
-            }}>
-              <Button variant="contained" onClick={ unsetRoad } sx={{ marginRight: '16px' }}>Home</Button>
-              <Button variant="contained" onClick={ refresh } sx={{ marginRight: '16px' }}>Refresh</Button>
-              <RoadSelector width="calc(100% - 224px)" road={ road } roads={ roads } setRoad={ roadChange } />
-            </Box>
-            <Box mx={1} px={1} sx={{
-              display: { xs: 'flex', sm: 'flex', md: 'flex', lg: 'none', xl: 'none' },
-              backgroundColor: "#111111",
-              color: "#AAAAAA"
-            }}>
-              <FormGroup>
-                <Grid container>
-                  <Grid item xs={6}>
-                    <FormControlLabel control={<Checkbox checked={showSpeeds} onChange={() => setShowSpeeds(!showSpeeds)} sx={{ color: "#AAAAAA" }} />} label="Speeds" />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <FormControlLabel control={<Checkbox checked={showDistances} onChange={() => setShowDistances(!showDistances)} sx={{ color: "#AAAAAA" }} />} label="Distances" />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <FormControlLabel control={<Checkbox checked={showCCTV} onChange={() => setShowCCTV(!showCCTV)} sx={{ color: "#AAAAAA" }} />} label="CCTV" />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <FormControlLabel control={<Checkbox checked={showVMS} onChange={() => setShowVMS(!showVMS)} sx={{ color: "#AAAAAA" }} />} label="VMS" />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <FormControlLabel control={<Checkbox checked={showIncidents} onChange={() => setShowIncidents(!showIncidents)} sx={{ color: "#AAAAAA" }} />} label="Incidents" />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <FormControlLabel control={<Checkbox checked={showRoadworks} onChange={() => setShowRoadworks(!showRoadworks)} sx={{ color: "#AAAAAA" }} />} label="Roadworks" />
-                  </Grid>
+          <>
+            <SwipeableDrawer
+              anchor="left"
+              open={showSidebar}
+              onOpen={() => setShowSidebar(true)}
+              onClose={() => setShowSidebar(false)}
+              PaperProps={{ sx: { backgroundColor: '#222222', padding: '8px' } }}
+            >
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Button variant="contained" onClick={ () => { unsetRoad(null); setShowSidebar(false); } } fullWidth sx={{ paddingTop: '16px', paddingBottom: '16px', marginBottom: '16px' }}>Home</Button>
                 </Grid>
-              </FormGroup>
-            </Box>
-            {
-              loading
-              ? <Loading />
-              : data !== null && data.dataTimestamp
-                ?
-                  <Grid container>
-                    <Grid item p={2} lg={2} xl={2} sx={{ display: { xs: 'none', sm: 'none', md: 'none', lg: 'block', xl: 'block' }, position: 'fixed', top: 0, bottom: 0 }}>
-                      <Grid container spacing={2}>
-                        <Grid item xs={6}>
-                          <Button variant="contained" onClick={ unsetRoad } fullWidth sx={{ paddingTop: '16px', paddingBottom: '16px', marginBottom: '16px' }}>Home</Button>
+                <Grid item xs={6}>
+                  <Button variant="contained" onClick={ () => { refresh(null); setShowSidebar(false); } } fullWidth sx={{ paddingTop: '16px', paddingBottom: '16px', marginBottom: '16px' }}>Refresh</Button>
+                </Grid>
+              </Grid>
+              <RoadSelector width="100%" road={ road } roads={ roads } setRoad={ roadChange } />
+              <br />
+              {
+                data && data.dataTimestamp
+                ? <Typography variant="caption" align="center" component="p" sx={{ color: '#AAAAAA' }}>Data Fetched At: { (new Date(data.dataTimestamp).toISOString().match(/(\d{4}\-\d{2}\-\d{2})T(\d{2}:\d{2}:\d{2})/) ?? ['', '', ''])[2] }</Typography>
+                : null
+              }
+              <Box
+                my={2}
+                p={2}
+                sx={{
+                  backgroundColor: '#111111',
+                  color: '#AAAAAA'
+                }}
+              >
+                <FormGroup>
+                  <FormControlLabel control={<Checkbox checked={showSpeeds} onChange={() => setShowSpeeds(!showSpeeds)} sx={{ color: "#AAAAAA" }} />} label="Show Speeds" />
+                  <FormControlLabel control={<Checkbox checked={showDistances} onChange={() => setShowDistances(!showDistances)} sx={{ color: "#AAAAAA" }} />} label="Show Distances" />
+                  <FormControlLabel control={<Checkbox checked={showCCTV} onChange={() => setShowCCTV(!showCCTV)} sx={{ color: "#AAAAAA" }} />} label="Show CCTV" />
+                  <FormControlLabel control={<Checkbox checked={showVMS} onChange={() => setShowVMS(!showVMS)} sx={{ color: "#AAAAAA" }} />} label="Show VMS" />
+                  <FormControlLabel control={<Checkbox checked={showIncidents} onChange={() => setShowIncidents(!showIncidents)} sx={{ color: "#AAAAAA" }} />} label="Show Incidents" />
+                  <FormControlLabel control={<Checkbox checked={showRoadworks} onChange={() => setShowRoadworks(!showRoadworks)} sx={{ color: "#AAAAAA" }} />} label="Show Roadworks" />
+                </FormGroup>
+              </Box>
+            </SwipeableDrawer>
+            <Box sx={{
+              backgroundColor: "#222222"
+            }}>
+              <Box sx={{
+                display: { xs: 'flex', sm: 'flex', md: 'flex', lg: 'none', xl: 'none' },
+                justifyContent: "center",
+                paddingTop: '16px',
+                paddingBottom: '16px',
+              }}>
+                <Button variant="contained" onClick={ () => setShowSidebar(true) } sx={{ marginRight: '16px' }}>Menu</Button>
+                <RoadSelector width="calc(100% - 112px)" road={ road } roads={ roads } setRoad={ roadChange } />
+              </Box>
+              {
+                loading
+                ? <Loading />
+                : data !== null && data.dataTimestamp
+                  ?
+                    <Grid container>
+                      <Grid item p={2} lg={2} xl={2} sx={{ display: { xs: 'none', sm: 'none', md: 'none', lg: 'block', xl: 'block' }, position: 'fixed', top: 0, bottom: 0 }}>
+                        <Grid container spacing={2}>
+                          <Grid item xs={6}>
+                            <Button variant="contained" onClick={ unsetRoad } fullWidth sx={{ paddingTop: '16px', paddingBottom: '16px', marginBottom: '16px' }}>Home</Button>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Button variant="contained" onClick={ refresh } fullWidth sx={{ paddingTop: '16px', paddingBottom: '16px', marginBottom: '16px' }}>Refresh</Button>
+                          </Grid>
                         </Grid>
-                        <Grid item xs={6}>
-                          <Button variant="contained" onClick={ refresh } fullWidth sx={{ paddingTop: '16px', paddingBottom: '16px', marginBottom: '16px' }}>Refresh</Button>
-                        </Grid>
-                      </Grid>
-                      <RoadSelector width="100%" road={ road } roads={ roads } setRoad={ roadChange } />
-                      <br />
-                      <Typography variant="caption" align="center" component="p">Data Fetched At: { (new Date(data.dataTimestamp).toISOString().match(/(\d{4}\-\d{2}\-\d{2})T(\d{2}:\d{2}:\d{2})/) ?? ['', '', ''])[2] }</Typography>
-                      <Box
-                        my={2}
-                        p={2}
-                        sx={{
-                          backgroundColor: '#111111',
-                          color: '#AAAAAA'
-                        }}
-                      >
-                        <FormGroup>
-                          <FormControlLabel control={<Checkbox checked={showSpeeds} onChange={() => setShowSpeeds(!showSpeeds)} sx={{ color: "#AAAAAA" }} />} label="Show Speeds" />
-                          <FormControlLabel control={<Checkbox checked={showDistances} onChange={() => setShowDistances(!showDistances)} sx={{ color: "#AAAAAA" }} />} label="Show Distances" />
-                          <FormControlLabel control={<Checkbox checked={showCCTV} onChange={() => setShowCCTV(!showCCTV)} sx={{ color: "#AAAAAA" }} />} label="Show CCTV" />
-                          <FormControlLabel control={<Checkbox checked={showVMS} onChange={() => setShowVMS(!showVMS)} sx={{ color: "#AAAAAA" }} />} label="Show VMS" />
-                          <FormControlLabel control={<Checkbox checked={showIncidents} onChange={() => setShowIncidents(!showIncidents)} sx={{ color: "#AAAAAA" }} />} label="Show Incidents" />
-                          <FormControlLabel control={<Checkbox checked={showRoadworks} onChange={() => setShowRoadworks(!showRoadworks)} sx={{ color: "#AAAAAA" }} />} label="Show Roadworks" />
-                        </FormGroup>
-                      </Box>
-                      <Accordion 
-                        disableGutters
-                        sx={{
-                          maxHeight: 'calc(100% - 488px)',
-                          borderRadius: '0 !important',
-                          overflowY: 'auto'
-                        }}
-                      >
-                        <AccordionSummary
-                          expandIcon={<ExpandMoreIcon sx={{ color: '#AAAAAA' }} />}
+                        <RoadSelector width="100%" road={ road } roads={ roads } setRoad={ roadChange } />
+                        <br />
+                        <Typography variant="caption" align="center" component="p">Data Fetched At: { (new Date(data.dataTimestamp).toISOString().match(/(\d{4}\-\d{2}\-\d{2})T(\d{2}:\d{2}:\d{2})/) ?? ['', '', ''])[2] }</Typography>
+                        <Box
+                          my={2}
+                          p={2}
                           sx={{
                             backgroundColor: '#111111',
                             color: '#AAAAAA'
                           }}
                         >
-                          <Typography>Jump to Junction</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails
+                          <FormGroup>
+                            <FormControlLabel control={<Checkbox checked={showSpeeds} onChange={() => setShowSpeeds(!showSpeeds)} sx={{ color: "#AAAAAA" }} />} label="Show Speeds" />
+                            <FormControlLabel control={<Checkbox checked={showDistances} onChange={() => setShowDistances(!showDistances)} sx={{ color: "#AAAAAA" }} />} label="Show Distances" />
+                            <FormControlLabel control={<Checkbox checked={showCCTV} onChange={() => setShowCCTV(!showCCTV)} sx={{ color: "#AAAAAA" }} />} label="Show CCTV" />
+                            <FormControlLabel control={<Checkbox checked={showVMS} onChange={() => setShowVMS(!showVMS)} sx={{ color: "#AAAAAA" }} />} label="Show VMS" />
+                            <FormControlLabel control={<Checkbox checked={showIncidents} onChange={() => setShowIncidents(!showIncidents)} sx={{ color: "#AAAAAA" }} />} label="Show Incidents" />
+                            <FormControlLabel control={<Checkbox checked={showRoadworks} onChange={() => setShowRoadworks(!showRoadworks)} sx={{ color: "#AAAAAA" }} />} label="Show Roadworks" />
+                          </FormGroup>
+                        </Box>
+                        <Accordion 
+                          disableGutters
                           sx={{
-                            backgroundColor: '#111111'
+                            maxHeight: 'calc(100% - 488px)',
+                            borderRadius: '0 !important',
+                            overflowY: 'auto'
                           }}
                         >
+                          <AccordionSummary
+                            expandIcon={<ExpandMoreIcon sx={{ color: '#AAAAAA' }} />}
+                            sx={{
+                              backgroundColor: '#111111',
+                              color: '#AAAAAA'
+                            }}
+                          >
+                            <Typography>Jump to Junction</Typography>
+                          </AccordionSummary>
+                          <AccordionDetails
+                            sx={{
+                              backgroundColor: '#111111'
+                            }}
+                          >
+                            {
+                              [...data.primaryDirectionSections].reverse().filter((e: any) => { return e.interface === 'JUNCTION' }).map((section: any, index: number) => (
+                                <Button 
+                                  key={index} 
+                                  onClick={() => jump(index)} 
+                                  fullWidth
+                                  sx={{
+                                    color: '#AAAAAA',
+                                    '&:hover': {
+                                      backgroundColor: 'transparent !important'
+                                    }
+                                  }}
+                                >
+                                  { section.payload.name }
+                                </Button>
+                              ))
+                            }
+                          </AccordionDetails>
+                        </Accordion>
+                      </Grid>
+                      <Grid item xs={0} sm={0} md={0} lg={2} xl={2}>
+                      </Grid>
+                      <Grid item xs={12} sm={12} md={12} lg={10} xl={10}>
+                        <Grid container spacing={1}>
+                          <Grid item xs={6} sm={5}>
+                            <DirectionHeader direction={ data.primaryDirection } colour={colour} primary={true} />
+                          </Grid>
+                          <Grid item sm={2} sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}>
+                            <RoadHeader road={ data.road } ringRoad={ data.circularRoad } colour={colour} />
+                          </Grid>
+                          <Grid item xs={6} sm={5}>
+                            <DirectionHeader direction={ data.secondaryDirection } colour={colour} primary={false} />
+                          </Grid>
                           {
-                            [...data.primaryDirectionSections].reverse().filter((e: any) => { return e.interface === 'JUNCTION' }).map((section: any, index: number) => (
-                              <Button 
-                                key={index} 
-                                onClick={() => jump(index)} 
-                                fullWidth
-                                sx={{
-                                  color: '#AAAAAA',
-                                  '&:hover': {
-                                    backgroundColor: 'transparent !important'
-                                  }
-                                }}
-                              >
-                                { section.payload.name }
-                              </Button>
+                            [...data.primaryDirectionSections].reverse().map((section: any, index: number) => (
+                              section.interface === "JUNCTION"
+                              ?
+                                <React.Fragment key={index}>
+                                  <Grid item xs={6} sm={5}>
+                                    <JunctionHeader text={ section.payload.destination } colour={colour} />
+                                  </Grid>
+                                  <Grid item xs={2} sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}>
+                                    <JunctionHeader refs={(element: any) => refs.current.push(element)} text={ section.payload.name } arrows colour={colour} />
+                                  </Grid>
+                                  <Grid item xs={6} sm={5}>
+                                    <JunctionHeader text={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.destination } colour={colour} />
+                                  </Grid>
+                                </React.Fragment>
+                              : 
+                              <React.Fragment key={index}>
+                                  <Grid item xs={6} sm={5} sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center'
+                                  }}>
+                                    {
+                                      showSpeeds
+                                      ? <AverageSpeed speed={ Math.round(section.payload.speed)} />
+                                      : null
+                                    }
+                                    {
+                                      showDistances
+                                      ? <Distance distance={ section.payload.length} />
+                                      : null
+                                    }
+                                    {
+                                      [...section.payload.data].reverse().map((info: any, index: number) => (
+                                        info.interface === "CCTV" && showCCTV
+                                        ? 
+                                          <CCTV key={ info.payload.id } lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
+                                        : info.interface === "VMS" && showVMS
+                                          ?
+                                            <VMS key={ info.payload.address } lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
+                                          : info.interface === "EVENT" && ((info.payload.type !== "ROADWORKS" && showIncidents) || (info.payload.type === "ROADWORKS" && showRoadworks))
+                                            ?
+                                                <Event key={ info.payload.id } type={ info.payload.type } reason={ info.payload.reason } severity={ info.payload.severity } lanes={ info.payload.lanes } />
+                                            : <></>
+                                      ))
+                                    }
+                                  </Grid>
+                                  <Grid item sm={2} sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}></Grid>
+                                  <Grid item xs={6} sm={5} sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center'
+                                  }}>
+                                    {
+                                      showSpeeds
+                                      ? <AverageSpeed speed={ Math.round(data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.speed)} />
+                                      : null
+                                    }
+                                    {
+                                      showDistances
+                                      ? <Distance distance={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.length} />
+                                      : null
+                                    }
+                                    {
+                                      data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.data.map((info: any, index: number) => (
+                                        info.interface === "CCTV" && showCCTV
+                                        ?
+                                          <CCTV key={ info.payload.id } lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
+                                        : info.interface === "VMS" && showVMS
+                                          ?
+                                            <VMS key={ info.payload.address } lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
+                                          : info.interface === "EVENT" && ((info.payload.type !== "ROADWORKS" && showIncidents) || (info.payload.type === "ROADWORKS" && showRoadworks))
+                                            ?
+                                              <Event key={ info.payload.id } type={ info.payload.type } reason={ info.payload.reason } severity={ info.payload.severity } lanes={ info.payload.lanes } />
+                                            : <></>
+                                      ))
+                                    }
+                                  </Grid>
+                                </React.Fragment>
                             ))
                           }
-                        </AccordionDetails>
-                      </Accordion>
-                    </Grid>
-                    <Grid item xs={0} sm={0} md={0} lg={2} xl={2}>
-                    </Grid>
-                    <Grid item xs={12} sm={12} md={12} lg={10} xl={10}>
-                      <Grid container spacing={1}>
-                        <Grid item xs={6} sm={5}>
-                          <DirectionHeader direction={ data.primaryDirection } colour={colour} primary={true} />
                         </Grid>
-                        <Grid item sm={2} sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}>
-                          <RoadHeader road={ data.road } ringRoad={ data.circularRoad } colour={colour} />
-                        </Grid>
-                        <Grid item xs={6} sm={5}>
-                          <DirectionHeader direction={ data.secondaryDirection } colour={colour} primary={false} />
-                        </Grid>
-                        {
-                          [...data.primaryDirectionSections].reverse().map((section: any, index: number) => (
-                            section.interface === "JUNCTION"
-                            ?
-                              <React.Fragment key={index}>
-                                <Grid item xs={6} sm={5}>
-                                  <JunctionHeader text={ section.payload.destination } colour={colour} />
-                                </Grid>
-                                <Grid item xs={2} sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}>
-                                  <JunctionHeader refs={(element: any) => refs.current.push(element)} text={ section.payload.name } arrows colour={colour} />
-                                </Grid>
-                                <Grid item xs={6} sm={5}>
-                                  <JunctionHeader text={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.destination } colour={colour} />
-                                </Grid>
-                              </React.Fragment>
-                            : 
-                            <React.Fragment key={index}>
-                                <Grid item xs={6} sm={5} sx={{
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  justifyContent: 'center'
-                                }}>
-                                  {
-                                    showSpeeds
-                                    ? <AverageSpeed speed={ Math.round(section.payload.speed)} />
-                                    : null
-                                  }
-                                  {
-                                    showDistances
-                                    ? <Distance distance={ section.payload.length} />
-                                    : null
-                                  }
-                                  {
-                                    [...section.payload.data].reverse().map((info: any, index: number) => (
-                                      info.interface === "CCTV" && showCCTV
-                                      ? 
-                                        <CCTV key={ info.payload.id } lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
-                                      : info.interface === "VMS" && showVMS
-                                        ?
-                                          <VMS key={ info.payload.address } lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
-                                        : info.interface === "EVENT" && ((info.payload.type !== "ROADWORKS" && showIncidents) || (info.payload.type === "ROADWORKS" && showRoadworks))
-                                          ?
-                                              <Event key={ info.payload.id } type={ info.payload.type } reason={ info.payload.reason } severity={ info.payload.severity } lanes={ info.payload.lanes } />
-                                          : <></>
-                                    ))
-                                  }
-                                </Grid>
-                                <Grid item sm={2} sx={{ display: { xs: 'none', sm: 'block', md: 'block', lg: 'block', xl: 'block' } }}></Grid>
-                                <Grid item xs={6} sm={5} sx={{
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  justifyContent: 'center'
-                                }}>
-                                  {
-                                    showSpeeds
-                                    ? <AverageSpeed speed={ Math.round(data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.speed)} />
-                                    : null
-                                  }
-                                  {
-                                    showDistances
-                                    ? <Distance distance={ data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.length} />
-                                    : null
-                                  }
-                                  {
-                                    data.secondaryDirectionSections[data.secondaryDirectionSections.length - 1 - index].payload.data.map((info: any, index: number) => (
-                                      info.interface === "CCTV" && showCCTV
-                                      ?
-                                        <CCTV key={ info.payload.id } lat={ info.payload.lat } long={ info.payload.long } image={ info.payload.image } description={ info.payload.description } />
-                                      : info.interface === "VMS" && showVMS
-                                        ?
-                                          <VMS key={ info.payload.address } lat={ info.payload.lat } long={ info.payload.long } vms={ info.payload.vms } sig={ info.payload.sig } />
-                                        : info.interface === "EVENT" && ((info.payload.type !== "ROADWORKS" && showIncidents) || (info.payload.type === "ROADWORKS" && showRoadworks))
-                                          ?
-                                            <Event key={ info.payload.id } type={ info.payload.type } reason={ info.payload.reason } severity={ info.payload.severity } lanes={ info.payload.lanes } />
-                                          : <></>
-                                    ))
-                                  }
-                                </Grid>
-                              </React.Fragment>
-                          ))
-                        }
                       </Grid>
                     </Grid>
-                  </Grid>
-                : 
-                  <NotFound unsetRoad={unsetRoad} />
-            }
-          </Box>
-
+                  : 
+                    <NotFound unsetRoad={unsetRoad} />
+              }
+            </Box>
+          </>
       }
     </div>
   );
