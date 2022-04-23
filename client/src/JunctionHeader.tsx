@@ -1,48 +1,65 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
+
 import {
-  Paper,
-  Typography
+    Paper,
+    Typography,
 } from '@mui/material';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
 interface JunctionHeaderProps {
-    text: string;
     arrows?: boolean;
+    refs?: any;
+    text: string;
 }
 
 function JunctionHeader(props: JunctionHeaderProps) {
-    const { text, arrows } = props;
+    const { refs, text, arrows } = props;
+
+    const colour = useSelector((state: any) => state.road.colour);
 
     return (
-        <Paper sx={{ 
-            backgroundColor: '#01579b', 
-            color: '#FFFFFF',
-            padding: 1,
-            margin: 1
-        }}>
+        <div ref={refs}>
+            <Paper sx={{
+                backgroundColor: colour === 'blue' ? '#01579b' : '#1b5e20',
+                color: '#FFFFFF',
+                padding: 1,
+                margin: 1,
+            }}
+            >
 
-            <Typography align="center" variant="h6">
-                {
-                    arrows
-                        ?
-                            <>
-                                <ArrowUpwardIcon sx={{
-                                    position: 'relative',
-                                    top: '4px',
-                                    right: '24px',
-                                }} />
-                                { text }
-                                <ArrowDownwardIcon sx={{
-                                    position: 'relative',
-                                    top: '4px',
-                                    left: '24px',
-                                }} />
-                            </>
-                        : text
-                }
-            </Typography>
-        </Paper>
+                <Typography align="center" variant="h6">
+                    {
+                        arrows
+                            ? (
+                                <>
+                                    <ArrowUpwardIcon sx={{
+                                        position: 'relative',
+                                        top: '4px',
+                                        right: '24px',
+                                        display: {
+                                            xs: 'none', sm: 'none', md: 'inline-block', lg: 'inline-block', xl: 'inline-block',
+                                        },
+                                    }}
+                                    />
+                                    { text }
+                                    <ArrowDownwardIcon sx={{
+                                        position: 'relative',
+                                        top: '4px',
+                                        left: '24px',
+                                        display: {
+                                            xs: 'none', sm: 'none', md: 'inline-block', lg: 'inline-block', xl: 'inline-block',
+                                        },
+                                    }}
+                                    />
+                                </>
+                            )
+                            : text
+                    }
+                </Typography>
+            </Paper>
+        </div>
     );
 }
 

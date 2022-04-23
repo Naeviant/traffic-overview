@@ -1,3 +1,7 @@
-export interface RoadList {
+export interface MotorwayList {
     [key: string]: [{}]
-};
+}
+
+export interface ARoadList {
+    roadName: string;
+}
