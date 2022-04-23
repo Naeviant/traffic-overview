@@ -26,7 +26,7 @@ function MobileTopBar() {
                 variant="contained"
                 onClick={() => dispatch(showSidebar())}
                 sx={{
-                    backgroundColor: colour === 'blue' ? '#01579b' : '#1b5e20',
+                    backgroundColor: colour === 'blue' ? '#01579b !important' : '#1b5e20 !important',
                     marginRight: '16px',
                 }}
             >
