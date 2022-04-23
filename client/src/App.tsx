@@ -75,6 +75,7 @@ function App() {
                             />
                             <Box sx={{
                                 backgroundColor: '#222222',
+                                minHeight: '100%',
                             }}
                             >
                                 <MobileTopBar />

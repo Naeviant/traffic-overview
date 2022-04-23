@@ -37,7 +37,7 @@ function MenuContent(props: MenuContentProps) {
                         fullWidth
                         onClick={() => { dispatch(unsetRoad()); hideSidebar(); }}
                         sx={{
-                            backgroundColor: colour === 'blue' ? '#01579b' : '#1b5e20',
+                            backgroundColor: colour === 'blue' ? '#01579b !important' : '#1b5e20 !important',
                             paddingTop: '16px',
                             paddingBottom: '16px',
                             marginBottom: '16px',
@@ -52,7 +52,7 @@ function MenuContent(props: MenuContentProps) {
                         fullWidth
                         onClick={() => { refresh(); hideSidebar(); }}
                         sx={{
-                            backgroundColor: colour === 'blue' ? '#01579b' : '#1b5e20',
+                            backgroundColor: colour === 'blue' ? '#01579b !important' : '#1b5e20 !important',
                             paddingTop: '16px',
                             paddingBottom: '16px',
                             marginBottom: '16px',
