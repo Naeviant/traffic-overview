@@ -4,7 +4,7 @@ export default function archiveData(roads: string[]) {
     const timestamps = fs.readdirSync(`${__dirname}/../../data/roads/historical`);
     for (const timestamp of timestamps) {
         if (parseInt(timestamp, 10) < Date.now() - 86400000) {
-            fs.rmSync(`${__dirname}/../data/roads/historical/${timestamp}`, { recursive: true, force: true });
+            fs.rmSync(`${__dirname}/../../data/roads/historical/${timestamp}`, { recursive: true, force: true });
         }
     }
 
